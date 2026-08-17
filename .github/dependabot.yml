@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # No npm/pip ecosystem here — this repo ships markdown and JSON manifests only,
+  # so the workflow actions are the only thing that goes stale.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    reviewers:
+      - Massed-Compute/techadmin

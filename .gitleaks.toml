@@ -1,0 +1,48 @@
+title = "massed-compute-claude-plugin"
+
+# Start from gitleaks' built-in provider rules (AWS, GitHub, Slack, private keys, ...)
+# and add rules for the things those miss.
+[extend]
+useDefault = true
+
+# The default ruleset only matches provider-shaped tokens. A plain human password
+# assigned to a variable — DB_PASSWORD=hunter2 — sails straight through it.
+# This repo ships only markdown and JSON manifests, so it should never contain a
+# password assignment at all and we can afford to be blunt.
+[[rules]]
+id = "mc-password-assignment"
+description = "Password or secret assigned to a variable"
+regex = '''(?i)\b(pass(word|wd)?|secret|api[_-]?key|auth[_-]?token|access[_-]?token|private[_-]?key)\b\s*[:=]\s*["']?([^\s"'{}<>$]{6,})["']?'''
+secretGroup = 3
+keywords = [
+  "password",
+  "passwd",
+  "pass",
+  "secret",
+  "apikey",
+  "api_key",
+  "api-key",
+  "authtoken",
+  "auth_token",
+  "accesstoken",
+  "access_token",
+  "privatekey",
+  "private_key",
+]
+
+[rules.allowlist]
+regexTarget = "match"
+regexes = [
+  # Documentation placeholders and env-var indirection, not real values.
+  '''(?i)[:=]\s*["']?(\$\{?[A-Z_]+\}?|<[^>]*>|\.\.\.|xxx+|your[_-]?\w+|example|changeme|placeholder|redacted|null|true|false)''',
+  # Prose in skill docs: "...their API key is stored in the keychain".
+  '''(?i)\b(pass(word|wd)?|secret|api[_-]?key)\b\s*[:=]\s*$''',
+]
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''\.gitleaks\.toml$''',
+  '''(^|/)LICENSE$''',
+  '''(^|/)\.github/workflows/''',
+]

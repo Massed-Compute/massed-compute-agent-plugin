@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# The fleet template also sets FORCE_JAVASCRIPT_ACTIONS_TO_NODE24. It is omitted here
+# because actions/checkout@v7 already declares `using: node24`, so the flag is a no-op.
+
+env:
+  GITLEAKS_VERSION: "8.30.1"
+  GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+
+jobs:
+  secrets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout (full history for diff scan)
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        run: |
+          # Download to disk and verify the checksum before extracting. Piping curl
+          # straight into tar would execute whatever the CDN happened to serve.
+          tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL -o "$tarball" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${tarball}"
+          echo "${GITLEAKS_SHA256}  ${tarball}" | sha256sum -c -
+          tar xz -f "$tarball" -C /usr/local/bin gitleaks
+          rm -f "$tarball"
+          gitleaks version
+
+      - name: Run gitleaks
+        run: |
+          # Rules live in .gitleaks.toml: the built-in provider set plus a rule for
+          # plain password assignments, which the defaults do not catch.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            gitleaks detect --config .gitleaks.toml \
+              --log-opts="${{ github.event.pull_request.base.sha }}..HEAD" --verbose
+          else
+            gitleaks detect --config .gitleaks.toml --verbose
+          fi
+
+      - name: Reject credential files
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            case "$f" in
+              .env|.env.*|*/.env|*/.env.*|*.pem|*.key|*.p12|*.pfx|*.ppk|\
+              id_rsa|id_dsa|id_ecdsa|id_ed25519|*/id_rsa|*/id_dsa|*/id_ecdsa|*/id_ed25519|\
+              *.kubeconfig|*credentials|*/.npmrc|*/.pypirc|*.jks|*.keystore)
+                echo "FAIL  $f is a credential file and must not be committed"
+                fail=1 ;;
+            esac
+          done < <(git ls-files)
+          [ "$fail" -eq 0 ] && echo "No credential files tracked."
+          exit "$fail"
+
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate JSON files
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            if jq empty "$f" 2>/dev/null; then
+              echo "ok    $f"
+            else
+              echo "FAIL  $f"
+              jq empty "$f" || true
+              fail=1
+            fi
+          done < <(find . -path ./.git -prune -o -name '*.json' -print)
+          exit "$fail"
+
+      - name: Validate plugin manifests
+        run: |
+          fail=0
+
+          # Marketplace manifest must name every plugin and point at a real source dir.
+          jq -e '.name and .plugins' .claude-plugin/marketplace.json > /dev/null \
+            || { echo "FAIL  marketplace.json missing name/plugins"; fail=1; }
+
+          while IFS= read -r src; do
+            if [ ! -f "$src/.claude-plugin/plugin.json" ]; then
+              echo "FAIL  marketplace source '$src' has no .claude-plugin/plugin.json"
+              fail=1
+            fi
+          done < <(jq -r '.plugins[].source' .claude-plugin/marketplace.json)
+
+          # Each plugin manifest needs name + version.
+          while IFS= read -r m; do
+            jq -e '.name and .version' "$m" > /dev/null \
+              || { echo "FAIL  $m missing name or version"; fail=1; }
+          done < <(find plugins -name plugin.json)
+
+          [ "$fail" -eq 0 ] && echo "All manifests valid."
+          exit "$fail"
+
+      - name: Validate skill frontmatter
+        run: |
+          fail=0
+          while IFS= read -r s; do
+            head -1 "$s" | grep -q '^---$' \
+              || { echo "FAIL  $s does not start with YAML frontmatter"; fail=1; continue; }
+            fm=$(awk 'NR>1 && /^---$/{exit} NR>1' "$s")
+            echo "$fm" | grep -q '^name:' \
+              || { echo "FAIL  $s frontmatter missing 'name:'"; fail=1; }
+            echo "$fm" | grep -q '^description:' \
+              || { echo "FAIL  $s frontmatter missing 'description:'"; fail=1; }
+            # An unquoted description containing ': ' parses as a nested map and the skill
+            # silently loses its description. Require quoting in that case.
+            desc=$(echo "$fm" | sed -n 's/^description: *//p')
+            case "$desc" in
+              \"*|\'*) ;;
+              *": "*)
+                echo "FAIL  $s description contains ': ' and must be quoted"
+                fail=1 ;;
+            esac
+          done < <(find plugins -name SKILL.md)
+
+          [ "$fail" -eq 0 ] && echo "All skills valid."
+          exit "$fail"
