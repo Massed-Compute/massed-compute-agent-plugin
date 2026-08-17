@@ -2,8 +2,10 @@
 #
 # Owner team discovered from Massed-Compute/vm-marketplace-public-docs
 # Dependabot reviewers: @Massed-Compute/techadmin
-# Administrator must confirm write access on this private repo and
-# require CODEOWNERS reviews on main. Do not add individual bypass actors.
+# Review request on 2026-08-17 returned HTTP 422 because this team was not a
+# repository collaborator. An administrator must grant the team write access
+# (or replace it with the approved reviewer team) before requiring CODEOWNERS
+# reviews on main. Do not add individual bypass actors.
 
 * @Massed-Compute/techadmin
 /.github/ @Massed-Compute/techadmin

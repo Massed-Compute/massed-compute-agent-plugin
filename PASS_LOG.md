@@ -85,4 +85,4 @@ Share-safe. No secrets, live IDs, or machine paths.
 - **Checked:** installed plugin status; plugin-qualified HTTP MCP connection; required read-only positive calls
 - **Verified:** `plugin:massed-compute:massed-compute` reported Connected; `account_token_validation`, `gpu_inventory_list`, `instances_list`, `account_billing`, and `images_list` passed with raw account output suppressed
 - **Boundaries:** no mutation tools were allowed; no VM was launched; no account identifiers were recorded; GitHub Actions did not receive OAuth credentials
-- **Open:** non-author approval of PR #1; authorized public visibility change after merge; human legal attestations in the Anthropic submission form
+- **Open:** non-author approval of PR #1 (currently blocked because `Gabe-Mills` is the only direct collaborator and `techadmin` is not a repo collaborator); authorized public visibility change after merge; human legal attestations in the Anthropic submission form

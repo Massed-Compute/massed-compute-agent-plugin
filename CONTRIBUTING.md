@@ -10,6 +10,8 @@ Link Jira. Marketplace listing: **MAR-19**.
 
 Independent approval from someone other than the author. CODEOWNERS: `@Massed-Compute/techadmin` (admin must confirm write access).
 
+As of 2026-08-17, GitHub rejected a review request to that team because it was not a repository collaborator. An organization administrator must grant the approved non-author reviewer or team access before this PR can merge.
+
 ## Local checks
 
 ```bash
