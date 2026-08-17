@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+.claude/
+.env
+.env.*
+api_key

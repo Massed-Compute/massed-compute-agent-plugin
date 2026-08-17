@@ -1,0 +1,55 @@
+# Console submit fill sheet
+
+Use after an org admin reviews this pack **and** the GitHub repo is public. Do not submit while the repo is private.
+
+Form: https://platform.claude.com/plugins/submit  
+Requires Console Developer, Admin, or Owner.
+
+## Fields
+
+| Field | Value |
+| --- | --- |
+| GitHub URL | https://github.com/Massed-Compute/massed-compute-claude-plugin |
+| Plugin name | massed-compute |
+| Display name | Massed Compute |
+| Short description | Launch and manage on-demand NVIDIA GPU VMs from chat. |
+| Homepage | https://vm-docs.massedcompute.com/docs/mcp/overview |
+| Website | https://massedcompute.com/ |
+| Support | https://massedcompute.com/contact/ |
+| Privacy | https://massedcompute.com/legal/privacy-policy/ |
+| Terms | https://massedcompute.com/legal/terms-conditions/ |
+| Docs | https://vm-docs.massedcompute.com/docs/mcp/overview |
+
+## Long description (paste)
+
+Official Massed Compute plugin for Claude Code and Cowork. Includes agent skills for picking GPUs, launching VMs, cost control, and safe termination, plus a remote MCP server for live inventory, billing, SSH keys, recipes, and instance lifecycle on your Massed Compute account.
+
+Users authenticate with Massed Compute OAuth (dynamic client registration). Does not sell plans or credits inside chat — billing stays on massedcompute.com. Destructive actions (terminate, SSH key delete) require confirmation.
+
+## MCP
+
+- URL: `https://vm.massedcompute.com/api/mcp`
+- Transport: HTTP (`type: http`)
+- Auth: OAuth 2.1 + PKCE + DCR (no bundled Bearer header)
+- Fallback (not for listing): user-supplied `Authorization: Bearer` key from vm.massedcompute.com/settings/api
+
+## After submit
+
+Do not re-submit the form for updates. Push to this repo; Anthropic CI re-screens and bumps the pin in `anthropics/claude-plugins-community`. Catalog sync can lag a day. Confirm installability by searching `massed-compute` in:
+
+https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json
+
+Install (after pin):
+
+```
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install massed-compute@claude-community
+```
+
+## Publish gate
+
+Do not click Submit until:
+
+1. This repo is **public**
+2. `claude plugin validate ./plugins/massed-compute` passes
+3. An org admin has reviewed the pack

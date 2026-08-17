@@ -1,0 +1,26 @@
+{
+  "name": "massed-compute",
+  "owner": {
+    "name": "Massed Compute",
+    "url": "https://massedcompute.com"
+  },
+  "metadata": {
+    "description": "Official Massed Compute plugins for Claude Code and Cowork.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "massed-compute",
+      "description": "On-demand NVIDIA GPU VMs — inventory, launch, cost control, and safe terminate via Massed Compute MCP.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Massed Compute",
+        "url": "https://massedcompute.com"
+      },
+      "homepage": "https://vm-docs.massedcompute.com/docs/mcp/overview",
+      "source": "./plugins/massed-compute",
+      "category": "developer-tools",
+      "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"]
+    }
+  ]
+}
