@@ -5,6 +5,14 @@ Run against a **review** Massed Compute account. Do not record secrets, emails, 
 Plugin MCP name: `plugin:massed-compute:massed-compute`
 Do not use the user-level stdio server named `massed-compute` for this checklist.
 
+GitHub Actions **must not** run this checklist. CI has no OAuth tokens and must not call production MCP tools. An authorized reviewer completes OAuth in an interactive terminal, then records results here (share-safe only).
+
+CI-safe pack checks (also `./scripts/validate.sh`):
+
+```bash
+python3 scripts/ci_checks.py
+```
+
 ## Pre
 
 ```bash

@@ -6,13 +6,18 @@ This is **not** a Claude Connectors Directory listing. Connectors (Claude.ai / D
 
 ## Status: private draft
 
-This repository is **private on purpose**. Anthropic's community marketplace **rejects closed-source plugins**. Do not submit until:
+This repository is **private on purpose**. Do not change visibility and do not submit to any marketplace from a feature branch.
 
-1. An org admin has reviewed this pack
-2. This GitHub repo is flipped **public**
-3. Someone with Console Developer / Admin / Owner submits at [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+Three separate gates (plus a fourth product that is a different pack):
+
+1. **Private installation** — clone this private repo and install locally (current).
+2. **Repository publication** — an authorized person makes the GitHub repo public. Not this PR.
+3. **Anthropic community marketplace** — Console submit at [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit) using `listing/PORTAL_FILL.md`. Anthropic rejects closed-source plugins. Legal attestations and reviewer credentials are filled by a human, not CI.
+4. **OpenAI Plugins Directory** — different pack and a separate org-admin publish gate. Not this repository.
 
 Do not click Submit, Publish, or make the repo public without that go-ahead.
+
+CI (`plugin-validate`, `json-validate`, `secrets-scan`, `home-path-scan`) never authenticates to Massed Compute and never proves OAuth or positive MCP calls. Those remain `tests/SMOKE_CHECKLIST.md` (interactive TTY).
 
 ## Layout
 

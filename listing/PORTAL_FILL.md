@@ -50,7 +50,12 @@ Install (after pin):
 
 Do not click Submit until:
 
-1. This repo is **public**
-2. `claude plugin validate ./plugins/massed-compute` passes
+1. This repo is **public** (authorized person only)
+2. `claude plugin validate ./plugins/massed-compute --strict` passes locally
 3. An org admin has reviewed the pack
-4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked
+4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked by a human (not CI)
+5. Legal attestations and any reviewer-account credentials are completed by that human
+
+OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic submit as OpenAI approval, or the reverse.
+
+This form does not claim that GitHub Actions completed OAuth or positive MCP calls.

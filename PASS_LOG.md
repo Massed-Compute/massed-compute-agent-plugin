@@ -74,3 +74,10 @@ Share-safe. No secrets, live IDs, or machine paths.
 - **Fixed:** `CHANGELOG.md`; this log
 - **Verified:** `./scripts/validate.sh`
 - **Open:** interactive `claude mcp login plugin:massed-compute:massed-compute` then `tests/SMOKE_CHECKLIST.md` positives; public flip + Console submit still gated
+
+### Pass C1 — Change-control / CI (2026-08-17)
+- **Checked:** no GitHub Actions on the pack; OAuth still human-owned
+- **Fixed:** `.github/workflows/plugin-ci.yml` (SHA-pinned checkout, `contents: read`); `scripts/ci_checks.py`; CODEOWNERS / PR template / SECURITY / CONTRIBUTING / change-control
+- **Verified:** `python3 scripts/ci_checks.py` and `./scripts/validate.sh` (CI-safe). Authenticated MCP calls were **not** run in CI and are **not** claimed here.
+- **Open:** administrator applies `main` ruleset; independent review of PR; interactive OAuth smoke; keep repo private; no marketplace submit
+

@@ -1,0 +1,63 @@
+# Required check names (branch protection / ruleset):
+#   json-validate
+#   secrets-scan
+#   home-path-scan
+#   plugin-validate
+#
+# This workflow does not authenticate to Massed Compute MCP and must not
+# receive OAuth tokens or API keys.
+name: Plugin CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  json-validate:
+    name: json-validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Validate JSON and plugin structure
+        run: python3 scripts/ci_checks.py --only json --only structure
+
+  secrets-scan:
+    name: secrets-scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Scan for secret-shaped literals
+        run: python3 scripts/ci_checks.py --only secrets
+
+  home-path-scan:
+    name: home-path-scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Scan for machine-specific home paths
+        run: python3 scripts/ci_checks.py --only home-paths
+
+  plugin-validate:
+    name: plugin-validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run pack validator (CI-safe; no Claude CLI / no MCP)
+        run: ./scripts/validate.sh

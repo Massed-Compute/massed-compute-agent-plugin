@@ -1,0 +1,15 @@
+# CODEOWNERS
+#
+# Owner team discovered from Massed-Compute/vm-marketplace-public-docs
+# Dependabot reviewers: @Massed-Compute/techadmin
+# Administrator must confirm write access on this private repo and
+# require CODEOWNERS reviews on main. Do not add individual bypass actors.
+
+* @Massed-Compute/techadmin
+/.github/ @Massed-Compute/techadmin
+/.github/CODEOWNERS @Massed-Compute/techadmin
+/.claude-plugin/ @Massed-Compute/techadmin
+/plugins/massed-compute/.claude-plugin/ @Massed-Compute/techadmin
+/plugins/massed-compute/.mcp.json @Massed-Compute/techadmin
+/plugins/massed-compute/skills/ @Massed-Compute/techadmin
+/listing/ @Massed-Compute/techadmin
