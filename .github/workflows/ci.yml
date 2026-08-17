@@ -45,7 +45,6 @@ jobs:
           tar -xzf "$archive" -C "$install_dir" gitleaks
           echo "$install_dir" >> "$GITHUB_PATH"
           "$install_dir/gitleaks" version
-          gitleaks version
 
       - name: Run gitleaks
         run: |
