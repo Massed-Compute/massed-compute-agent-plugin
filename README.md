@@ -27,13 +27,19 @@ plugins/massed-compute/
   skills/mc-safe-terminate/
   skills/setup/
 listing/PORTAL_FILL.md              # Console form copy
+tests/SMOKE_CHECKLIST.md
+scripts/validate.sh
+CHANGELOG.md
+PASS_LOG.md
 ```
 
 ## Auth
 
 MCP URL: `https://vm.massedcompute.com/api/mcp`
 
-Claude Code starts OAuth (DCR + PKCE) because `.mcp.json` has `type: http` and **no** `Authorization` header. Consent offers full access or read-only. Bearer API keys remain a documented fallback in `skills/setup/SKILL.md` — they are not bundled.
+Claude Code starts OAuth (DCR + PKCE) because `.mcp.json` has `type: http` and **no** `Authorization` header. Consent offers full access or read-only. Bearer API keys remain a documented fallback in `plugins/massed-compute/skills/setup/SKILL.md` — they are not bundled.
+
+The plugin MCP appears as `plugin:massed-compute:massed-compute`. A user-level stdio server named `massed-compute` (the `massed-compute.mcp` gateway) is a different process — do not treat a successful call on that gateway as plugin OAuth.
 
 The plugin ships `defaultEnabled: false`. Enable it after install; it talks to a paid account.
 
@@ -42,20 +48,37 @@ The plugin ships `defaultEnabled: false`. Enable it after install; it talks to a
 From this repo:
 
 ```bash
-claude plugin validate ./plugins/massed-compute
+./scripts/validate.sh
 claude --plugin-dir ./plugins/massed-compute
 ```
 
-Inside Claude Code:
+Install (plugin ships disabled):
 
 ```
-/plugin marketplace add /absolute/path/to/massed-compute-claude-plugin
-/plugin install massed-compute@massed-compute
+claude plugin marketplace add .
+claude plugin install massed-compute@massed-compute
+claude plugin enable massed-compute@massed-compute
 ```
 
-Then enable the plugin, run `/mcp`, complete OAuth, and call a read tool (e.g. validate token / list inventory).
+MCP server name: `plugin:massed-compute:massed-compute`. Authenticate, then call a read tool:
+
+```
+claude mcp login plugin:massed-compute:massed-compute
+```
+
+Or inside Claude Code: `/plugin marketplace add .` then `/plugin install massed-compute@massed-compute`, enable it, `/mcp`, complete OAuth.
 
 GitHub-org teammates with repo access can add `Massed-Compute/massed-compute-claude-plugin` the same way once they can clone.
+
+## Troubleshooting
+
+| Symptom | What to do |
+| --- | --- |
+| Plugin installed but no MCP | `defaultEnabled` is false. Run `claude plugin enable massed-compute@massed-compute`, then `/reload-plugins`. |
+| `/mcp` shows Needs authentication | `claude mcp login plugin:massed-compute:massed-compute` in an **interactive** terminal (browser consent). Non-TTY agents cannot finish OAuth. |
+| Token looks valid but you never saw a browser | You likely hit the user-level stdio gateway named `massed-compute`, not `plugin:massed-compute:massed-compute`. |
+| `claude mcp login` says stdin isn't a terminal | Re-run in a real terminal, not a piped agent shell. |
+| OAuth still failing | Follow `plugins/massed-compute/skills/setup/SKILL.md`. Bearer fallback is last resort and must not be committed. |
 
 ## After it is public + approved
 

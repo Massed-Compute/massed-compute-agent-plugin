@@ -77,5 +77,5 @@ Call `instances_terminate` only with `instanceUuids` (array of full UUID strings
 
 ## See also
 
-- [`mc-cost-control`](mc-cost-control.md) — produces the cleanup-candidate list this skill acts on
-- [`mc-launch-vms`](mc-launch-vms.md) — the SSH keys you keep are immediately reusable here
+- `mc-cost-control` — produces the cleanup-candidate list this skill acts on
+- `mc-launch-vms` — the SSH keys you keep are immediately reusable here

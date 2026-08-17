@@ -31,7 +31,7 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 - URL: `https://vm.massedcompute.com/api/mcp`
 - Transport: HTTP (`type: http`)
 - Auth: OAuth 2.1 + PKCE + DCR (no bundled Bearer header)
-- Fallback (not for listing): user-supplied `Authorization: Bearer` key from vm.massedcompute.com/settings/api
+- Fallback (not for listing): user-supplied `Authorization: Bearer <your-api-key>` from vm.massedcompute.com/settings/api
 
 ## After submit
 
@@ -53,3 +53,4 @@ Do not click Submit until:
 1. This repo is **public**
 2. `claude plugin validate ./plugins/massed-compute` passes
 3. An org admin has reviewed the pack
+4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked
