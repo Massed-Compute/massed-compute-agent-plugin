@@ -23,15 +23,15 @@ claude mcp login plugin:massed-compute:massed-compute   # interactive terminal
 ```
 
 - [x] Validate passed
-- [ ] `/mcp` shows plugin HTTP server connected (not only Needs authentication)
+- [x] `/mcp` shows plugin HTTP server connected (not only Needs authentication)
 
 ## Positive
 
-- [ ] `account_token_validation` `{}` → valid; no secrets echoed
-- [ ] `gpu_inventory_list` `{}` → SKUs/prices
-- [ ] `instances_list` `{}` → list or empty; passwords redacted
-- [ ] `account_billing` `{}` → recharge settings (no card PAN)
-- [ ] `images_list` `{}` → images returned
+- [x] `account_token_validation` `{}` → valid; no secrets echoed
+- [x] `gpu_inventory_list` `{}` → SKUs/prices
+- [x] `instances_list` `{}` → list or empty; passwords redacted
+- [x] `account_billing` `{}` → recharge settings (no card PAN)
+- [x] `images_list` `{}` → images returned
 
 ## Negative
 
@@ -46,4 +46,4 @@ claude mcp login plugin:massed-compute:massed-compute   # interactive terminal
 ## Notes
 
 Date: `2026-08-17`
-Result: `package validation passed; hosted MCP and skill behavior were checked separately. Plugin HTTP still Needs authentication until TTY OAuth, so plugin-specific positive calls remain unchecked. No VM launched.`
+Result: `package validation passed; /mcp reported plugin:massed-compute:massed-compute connected; the five required read-only positive calls passed in no-session-persistence Claude CLI runs with account details suppressed. No mutation tools were allowed and no VM was launched.`

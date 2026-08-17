@@ -81,3 +81,8 @@ Share-safe. No secrets, live IDs, or machine paths.
 - **Verified:** `python3 scripts/ci_checks.py` and `./scripts/validate.sh` (CI-safe). Authenticated MCP calls were **not** run in CI and are **not** claimed here.
 - **Open:** administrator applies `main` ruleset; independent review of PR; interactive OAuth smoke; keep repo private; no marketplace submit
 
+### Pass C2 — Authenticated publication smoke (2026-08-17)
+- **Checked:** installed plugin status; plugin-qualified HTTP MCP connection; required read-only positive calls
+- **Verified:** `plugin:massed-compute:massed-compute` reported Connected; `account_token_validation`, `gpu_inventory_list`, `instances_list`, `account_billing`, and `images_list` passed with raw account output suppressed
+- **Boundaries:** no mutation tools were allowed; no VM was launched; no account identifiers were recorded; GitHub Actions did not receive OAuth credentials
+- **Open:** non-author approval of PR #1; authorized public visibility change after merge; human legal attestations in the Anthropic submission form
