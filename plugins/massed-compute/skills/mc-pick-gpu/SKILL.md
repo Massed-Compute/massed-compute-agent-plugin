@@ -214,6 +214,6 @@ If weights need W GB and KV needs C GB, plan for at least W + C + 2 GB (activati
 
 ## See also
 
-- [`mc-launch-vms`](mc-launch-vms.md) — once you've picked a SKU, this skill orchestrates the launch
-- [`mc-cost-control`](mc-cost-control.md) — for ongoing visibility into what your picks cost
-- The MCP discovery doc at `https://vm.massedcompute.com/api/mcp` — authoritative tool list
+- `mc-launch-vms` — once you've picked a SKU, this skill orchestrates the launch
+- `mc-cost-control` — for ongoing visibility into what your picks cost
+- MCP endpoint: `https://vm.massedcompute.com/api/mcp` — authoritative tool list

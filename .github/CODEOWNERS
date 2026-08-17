@@ -1,0 +1,17 @@
+# CODEOWNERS
+#
+# Owner team discovered from Massed-Compute/vm-marketplace-public-docs
+# Dependabot reviewers: @Massed-Compute/techadmin
+# Review request on 2026-08-17 returned HTTP 422 because this team was not a
+# repository collaborator. An administrator must grant the team write access
+# (or replace it with the approved reviewer team) before requiring CODEOWNERS
+# reviews on main. Do not add individual bypass actors.
+
+* @Massed-Compute/techadmin
+/.github/ @Massed-Compute/techadmin
+/.github/CODEOWNERS @Massed-Compute/techadmin
+/.claude-plugin/ @Massed-Compute/techadmin
+/plugins/massed-compute/.claude-plugin/ @Massed-Compute/techadmin
+/plugins/massed-compute/.mcp.json @Massed-Compute/techadmin
+/plugins/massed-compute/skills/ @Massed-Compute/techadmin
+/listing/ @Massed-Compute/techadmin

@@ -85,5 +85,5 @@ This skill does not call `instances_terminate` under any circumstance. If the us
 
 ## See also
 
-- [`mc-safe-terminate`](mc-safe-terminate.md) — for actually cleaning up the candidates this skill flags
-- The billing UI at `/billing` for the authoritative balance and recharge history
+- `mc-safe-terminate` — for actually cleaning up the candidates this skill flags
+- Billing UI: https://vm.massedcompute.com/billing — authoritative balance and recharge history

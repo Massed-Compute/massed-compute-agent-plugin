@@ -27,7 +27,7 @@ Do not use this skill while the user is still researching what to launch. If the
 
 Run all three checks before any `instances_launch` call. None of them are skippable; each one corresponds to a launch failure mode that the API will not catch in advance.
 
-1. **Token valid** — call `account_token_validation`. If the call fails or returns invalid, surface the error verbatim and stop. There is no point continuing if the bearer token cannot authenticate; every downstream call will return 401 and the user will be staring at a launch loop that never starts.
+1. **Auth valid** — call `account_token_validation`. If the call fails or returns invalid, surface the error verbatim and stop. There is no point continuing if the plugin OAuth grant (or fallback Bearer) cannot authenticate; every downstream call will return 401 and the user will be staring at a launch loop that never starts.
 
 2. **Billing configured** — call `account_billing`. Both `recharge_amount` and `recharge_threshold` must be set to non-null, non-zero values. If either is missing, tell the user the launch will return 402 (payment required), point them at the billing UI in their account dashboard, and stop. Do not attempt the launch "to see what happens" — the 402 is deterministic and burns a request.
 
@@ -51,7 +51,7 @@ Call `images_list` and resolve the user's image by name. The MCP returns an arra
 
 4. Poll `instances_get` against that UUID until `status: running`, with a 5-minute upper bound. The MCP currently does not surface intermediate launch progress; the instance moves from `pending` to `running` when the host has provisioned it. If it stays `pending` past the 5-minute window, surface that fact and stop polling. Do not retry the launch — the original instance is still in flight, and a retry will create a duplicate.
 
-5. Output the SSH connect string (`user@ip` or equivalent from the instance payload). Prefer SSH key auth. Do **not** fetch, display, or paste cleartext VM passwords into the chat — MCP redacts them on purpose. If the user needs console password access, tell them to use the Massed Compute dashboard or their own REST client outside the conversation; never pull passwords into ChatGPT/Codex transcripts.
+5. Output the SSH connect string (`user@ip` or equivalent from the instance payload). Prefer SSH key auth. Do **not** fetch, display, or paste cleartext VM passwords into the chat — MCP redacts them on purpose. If the user needs console password access, tell them to use the Massed Compute dashboard or their own REST client outside the conversation; never pull passwords into this chat.
 
 ## Multi-launch flow (N>1)
 
@@ -87,6 +87,7 @@ After `instances_launch` returns success:
 
 ## See also
 
-- `mc-pick-gpu`
-- `mc-cost-control`
-- `mc-safe-terminate`
+- `mc-pick-gpu` — SKU selection before this skill
+- `mc-cost-control` — burn rate after launch
+- `mc-safe-terminate` — teardown
+- `setup` — plugin OAuth / MCP connect
