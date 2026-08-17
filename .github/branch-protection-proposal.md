@@ -5,6 +5,8 @@ Visibility: **private**. Do not change visibility in this PR.
 
 Apply the same `main-change-control` ruleset described in the docs repo file of the same name, with required checks:
 
+- `secrets`
+- `validate`
 - `json-validate`
 - `secrets-scan`
 - `home-path-scan`

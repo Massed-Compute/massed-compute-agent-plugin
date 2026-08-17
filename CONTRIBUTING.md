@@ -20,6 +20,8 @@ If Claude CLI is installed, that also runs `claude plugin validate --strict`. CI
 
 ## Required CI names (after admin applies branch protection)
 
+- `secrets`
+- `validate`
 - `json-validate`
 - `secrets-scan`
 - `home-path-scan`
