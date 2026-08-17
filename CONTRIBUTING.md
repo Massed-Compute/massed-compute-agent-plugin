@@ -16,7 +16,7 @@ Independent approval from someone other than the author. CODEOWNERS: `@Massed-Co
 ./scripts/validate.sh
 ```
 
-If Claude CLI is installed, that also runs `claude plugin validate --strict`. CI runs the same script without Claude CLI (structural JSON, skills, secret scan, home-path scan).
+If Claude CLI is installed, that also runs `claude plugin validate --strict`. CI runs the same script without Claude CLI (structural JSON, skills, repository-wide secret scan, and home-path scan) and adds a verified Gitleaks history scan.
 
 ## Required CI names (after admin applies branch protection)
 

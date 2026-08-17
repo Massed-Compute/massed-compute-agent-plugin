@@ -19,11 +19,15 @@ JSON_FILES = (MCP_JSON, PLUGIN_JSON, MARKETPLACE)
 SCAN_ROOTS = (
     PLUGIN,
     ROOT / ".claude-plugin",
+    ROOT / ".github",
     ROOT / "listing",
+    ROOT / "scripts",
     ROOT / "tests",
     ROOT / "README.md",
     ROOT / "CHANGELOG.md",
+    ROOT / "CONTRIBUTING.md",
     ROOT / "PASS_LOG.md",
+    ROOT / "SECURITY.md",
     ROOT / "LICENSE",
 )
 
