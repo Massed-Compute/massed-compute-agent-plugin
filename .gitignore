@@ -4,3 +4,15 @@
 .env
 .env.*
 api_key
+
+# Credential material — CI rejects these too, this is the first line of defence.
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+.npmrc
+credentials
