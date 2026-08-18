@@ -1,9 +1,11 @@
-# Console submit fill sheet
+# Marketplace submit fill sheet
 
 Use after an org admin reviews this pack **and** the GitHub repo is public. Do not submit while the repo is private.
 
-Form: https://platform.claude.com/plugins/submit  
-Requires Console Developer, Admin, or Owner.
+Claude form: https://platform.claude.com/plugins/submit  
+Cursor form: https://cursor.com/marketplace/publish
+
+Claude requires Console Developer, Admin, or Owner. Cursor requires a signed-in Cursor publisher account.
 
 ## Fields
 
@@ -29,9 +31,23 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 ## MCP
 
 - URL: `https://vm.massedcompute.com/api/mcp`
+- Claude file: `plugins/massed-compute/.mcp.json`
+- Cursor file: `plugins/massed-compute/mcp.json`
 - Transport: HTTP (`type: http`)
 - Auth: OAuth 2.1 + PKCE + DCR (no bundled Bearer header)
 - Fallback (not for listing): user-supplied `Authorization: Bearer <your-api-key>` from vm.massedcompute.com/settings/api
+
+## Cursor publisher application fields
+
+| Field | Value |
+| --- | --- |
+| Organization name | Massed Compute |
+| Organization handle | massed-compute |
+| Contact email | gabe@massedcompute.com |
+| Logotype URL | https://massedcompute.com/favicon.ico |
+| Description | Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills. |
+| GitHub repository | https://github.com/Massed-Compute/massed-compute-claude-plugin |
+| Website URL | https://massedcompute.com/ |
 
 ## After submit
 
@@ -56,6 +72,6 @@ Do not click Submit until:
 4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked by a human (not CI)
 5. Legal attestations and any reviewer-account credentials are completed by that human
 
-OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic submit as OpenAI approval, or the reverse.
+OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic or Cursor submit as OpenAI approval, or the reverse.
 
 This form does not claim that GitHub Actions completed OAuth or positive MCP calls.

@@ -11,14 +11,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "massed-compute"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
+CURSOR_MARKETPLACE = ROOT / ".cursor-plugin" / "marketplace.json"
 PLUGIN_JSON = PLUGIN / ".claude-plugin" / "plugin.json"
+CURSOR_PLUGIN_JSON = PLUGIN / ".cursor-plugin" / "plugin.json"
 MCP_JSON = PLUGIN / ".mcp.json"
+CURSOR_MCP_JSON = PLUGIN / "mcp.json"
 
-JSON_FILES = (MCP_JSON, PLUGIN_JSON, MARKETPLACE)
+JSON_FILES = (
+    MCP_JSON,
+    CURSOR_MCP_JSON,
+    PLUGIN_JSON,
+    CURSOR_PLUGIN_JSON,
+    MARKETPLACE,
+    CURSOR_MARKETPLACE,
+)
 
 SCAN_ROOTS = (
     PLUGIN,
     ROOT / ".claude-plugin",
+    ROOT / ".cursor-plugin",
     ROOT / ".github",
     ROOT / "listing",
     ROOT / "scripts",
@@ -94,37 +105,61 @@ def check_structure() -> list[str]:
         return errors
 
     plugin = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+    cursor_plugin = json.loads(CURSOR_PLUGIN_JSON.read_text(encoding="utf-8"))
     market = json.loads(MARKETPLACE.read_text(encoding="utf-8"))
+    cursor_market = json.loads(CURSOR_MARKETPLACE.read_text(encoding="utf-8"))
     mcp = json.loads(MCP_JSON.read_text(encoding="utf-8"))
+    cursor_mcp = json.loads(CURSOR_MCP_JSON.read_text(encoding="utf-8"))
 
     if plugin.get("name") != "massed-compute":
-        errors.append("plugin.json name must be massed-compute")
+        errors.append(".claude-plugin/plugin.json name must be massed-compute")
     if plugin.get("defaultEnabled") is not False:
-        errors.append("plugin.json defaultEnabled must be false")
+        errors.append(".claude-plugin/plugin.json defaultEnabled must be false")
+    if cursor_plugin.get("name") != "massed-compute":
+        errors.append(".cursor-plugin/plugin.json name must be massed-compute")
+    if cursor_plugin.get("displayName") != "Massed Compute":
+        errors.append(".cursor-plugin/plugin.json displayName must be Massed Compute")
 
     plugins = market.get("plugins") or []
     if not plugins:
-        errors.append("marketplace.json has no plugins")
+        errors.append(".claude-plugin/marketplace.json has no plugins")
     for entry in plugins:
         source = entry.get("source")
         if not source:
-            errors.append("marketplace plugin missing source")
+            errors.append(".claude-plugin marketplace plugin missing source")
             continue
         src_path = (ROOT / source).resolve()
         if not src_path.is_dir():
-            errors.append(f"marketplace source missing: {source}")
+            errors.append(f".claude-plugin marketplace source missing: {source}")
 
-    servers = (mcp.get("mcpServers") or {})
-    server = servers.get("massed-compute") or {}
-    if server.get("type") != "http":
-        errors.append(".mcp.json massed-compute.type must be http")
-    url = server.get("url") or ""
-    if not str(url).startswith("https://"):
-        errors.append(".mcp.json url must be https")
-    headers = server.get("headers") or {}
-    auth = headers.get("Authorization") or headers.get("authorization")
-    if auth:
-        errors.append(".mcp.json must not ship an Authorization header")
+    cursor_plugins = cursor_market.get("plugins") or []
+    if not cursor_plugins:
+        errors.append(".cursor-plugin/marketplace.json has no plugins")
+    for entry in cursor_plugins:
+        source = entry.get("source")
+        if not source:
+            errors.append(".cursor-plugin marketplace plugin missing source")
+            continue
+        src_path = (ROOT / source).resolve()
+        if not src_path.is_dir():
+            errors.append(f".cursor-plugin marketplace source missing: {source}")
+        if not (src_path / ".cursor-plugin" / "plugin.json").is_file():
+            errors.append(f"Cursor source missing manifest: {source}/.cursor-plugin/plugin.json")
+        if not (src_path / "mcp.json").is_file():
+            errors.append(f"Cursor source missing MCP config: {source}/mcp.json")
+
+    for label, payload in ((".mcp.json", mcp), ("mcp.json", cursor_mcp)):
+        servers = (payload.get("mcpServers") or {})
+        server = servers.get("massed-compute") or {}
+        if server.get("type") != "http":
+            errors.append(f"{label} massed-compute.type must be http")
+        url = server.get("url") or ""
+        if not str(url).startswith("https://"):
+            errors.append(f"{label} url must be https")
+        headers = server.get("headers") or {}
+        auth = headers.get("Authorization") or headers.get("authorization")
+        if auth:
+            errors.append(f"{label} must not ship an Authorization header")
 
     skills_dir = PLUGIN / "skills"
     if not skills_dir.is_dir():
