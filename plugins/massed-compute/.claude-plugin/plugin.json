@@ -7,7 +7,7 @@
     "url": "https://massedcompute.com"
   },
   "homepage": "https://vm-docs.massedcompute.com/docs/mcp/overview",
-  "repository": "https://github.com/Massed-Compute/massed-compute-claude-plugin",
+  "repository": "https://github.com/Massed-Compute/massed-compute-agent-plugin",
   "license": "MIT",
   "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"],
   "defaultEnabled": false

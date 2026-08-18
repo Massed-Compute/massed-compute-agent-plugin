@@ -1,4 +1,4 @@
-title = "massed-compute-claude-plugin"
+title = "massed-compute-agent-plugin"
 
 # Start from gitleaks' built-in provider rules (AWS, GitHub, Slack, private keys, ...)
 # and add rules for the things those miss.

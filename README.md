@@ -77,7 +77,7 @@ claude mcp login plugin:massed-compute:massed-compute
 
 Or inside Claude Code: `/plugin marketplace add .` then `/plugin install massed-compute@massed-compute`, enable it, `/mcp`, complete OAuth.
 
-GitHub-org teammates with repo access can add `Massed-Compute/massed-compute-claude-plugin` the same way once they can clone.
+GitHub-org teammates with repo access can add `Massed-Compute/massed-compute-agent-plugin` the same way once they can clone.
 
 ## Cursor package
 

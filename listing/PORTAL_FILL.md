@@ -11,7 +11,7 @@ Claude requires Console Developer, Admin, or Owner. Cursor requires a signed-in 
 
 | Field | Value |
 | --- | --- |
-| GitHub URL | https://github.com/Massed-Compute/massed-compute-claude-plugin |
+| GitHub URL | https://github.com/Massed-Compute/massed-compute-agent-plugin |
 | Plugin name | massed-compute |
 | Display name | Massed Compute |
 | Short description | Launch and manage on-demand NVIDIA GPU VMs from chat. |
@@ -46,7 +46,7 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 | Contact email | gabe@massedcompute.com |
 | Logotype URL | https://massedcompute.com/favicon.ico |
 | Description | Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills. |
-| GitHub repository | https://github.com/Massed-Compute/massed-compute-claude-plugin |
+| GitHub repository | https://github.com/Massed-Compute/massed-compute-agent-plugin |
 | Website URL | https://massedcompute.com/ |
 
 ## After submit
