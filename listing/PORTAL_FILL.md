@@ -43,8 +43,8 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 | --- | --- |
 | Organization name | Massed Compute |
 | Organization handle | massed-compute |
-| Contact email | gabe@massedcompute.com |
-| Logotype URL | https://raw.githubusercontent.com/Massed-Compute/massed-compute-agent-plugin/main/plugins/massed-compute/skills/mc-pick-gpu/assets/icon.png |
+| Contact email | techadmin@massedcompute.com |
+| Logotype URL | https://raw.githubusercontent.com/Massed-Compute/massed-compute-agent-plugin/main/plugins/massed-compute/assets/logo.svg |
 | Description | Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills. |
 | GitHub repository | https://github.com/Massed-Compute/massed-compute-agent-plugin |
 | Website URL | https://massedcompute.com/ |

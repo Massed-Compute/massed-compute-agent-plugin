@@ -119,11 +119,19 @@ def check_structure() -> list[str]:
         errors.append(".cursor-plugin/plugin.json name must be massed-compute")
     if cursor_plugin.get("displayName") != "Massed Compute":
         errors.append(".cursor-plugin/plugin.json displayName must be Massed Compute")
+    cursor_owner = cursor_market.get("owner") or {}
+    if cursor_owner.get("email") != "techadmin@massedcompute.com":
+        errors.append(".cursor-plugin/marketplace.json owner.email must be techadmin@massedcompute.com")
+    cursor_author = cursor_plugin.get("author") or {}
+    if cursor_author.get("email") != "techadmin@massedcompute.com":
+        errors.append(".cursor-plugin/plugin.json author.email must be techadmin@massedcompute.com")
     logo = cursor_plugin.get("logo")
     if not logo:
         errors.append(".cursor-plugin/plugin.json must include logo")
     elif not (PLUGIN / logo).is_file():
         errors.append(f".cursor-plugin/plugin.json logo missing: {logo}")
+    elif not logo.startswith("assets/"):
+        errors.append(".cursor-plugin/plugin.json logo must use a dedicated plugin asset, not a skill icon")
 
     plugins = market.get("plugins") or []
     if not plugins:
@@ -145,6 +153,8 @@ def check_structure() -> list[str]:
         if not source:
             errors.append(".cursor-plugin marketplace plugin missing source")
             continue
+        if source.startswith("./"):
+            errors.append(".cursor-plugin marketplace source should not use a ./ prefix")
         src_path = (ROOT / source).resolve()
         if not src_path.is_dir():
             errors.append(f".cursor-plugin marketplace source missing: {source}")
