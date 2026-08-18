@@ -6,12 +6,12 @@ This is **not** a Claude Connectors Directory listing. Connectors (Claude.ai / D
 
 ## Status: marketplace review pack
 
-Do not submit to any marketplace from a feature branch.
+Repository visibility is policy-controlled. Do not change visibility and do not submit to any marketplace from a feature branch.
 
 Separate gates:
 
 1. **Private installation** — clone this repo and install locally while testing.
-2. **Repository publication** — an authorized person makes the GitHub repo public.
+2. **Repository publication** — an authorized person confirms the GitHub repo is public.
 3. **Claude community marketplace** — Console submit at [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit) using `listing/PORTAL_FILL.md`. Anthropic rejects closed-source plugins. Legal attestations and reviewer credentials are filled by a human, not CI.
 4. **Cursor marketplace** — Submit the same GitHub repo at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish). Cursor reads `.cursor-plugin/marketplace.json`, `plugins/massed-compute/.cursor-plugin/plugin.json`, and `plugins/massed-compute/mcp.json`.
 5. **OpenAI Plugins Directory** — different pack and a separate org-admin publish gate. Not this repository.
@@ -111,10 +111,10 @@ plugins/massed-compute/skills/
 
 Anthropic pins a commit SHA and syncs the catalog nightly. Later updates: push here; do not re-submit the form.
 
-## Submit plan
+## Submit plan (blocked)
 
 1. Review pack (this README, `plugins/massed-compute`, `listing/PORTAL_FILL.md`)
-2. Flip GitHub visibility to public
+2. Confirm GitHub visibility is public
 3. Fill [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit) from `listing/PORTAL_FILL.md`
 4. Fill [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) with the same public GitHub repo
 5. Wait for automated validation + marketplace review

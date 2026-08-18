@@ -44,7 +44,7 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 | Organization name | Massed Compute |
 | Organization handle | massed-compute |
 | Contact email | gabe@massedcompute.com |
-| Logotype URL | https://massedcompute.com/favicon.ico |
+| Logotype URL | https://raw.githubusercontent.com/Massed-Compute/massed-compute-agent-plugin/main/plugins/massed-compute/skills/mc-pick-gpu/assets/icon.png |
 | Description | Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills. |
 | GitHub repository | https://github.com/Massed-Compute/massed-compute-agent-plugin |
 | Website URL | https://massedcompute.com/ |
@@ -69,8 +69,9 @@ Do not click Submit until:
 1. This repo is **public** (authorized person only)
 2. `claude plugin validate ./plugins/massed-compute --strict` passes locally
 3. An org admin has reviewed the pack
-4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked by a human (not CI)
-5. Legal attestations and any reviewer-account credentials are completed by that human
+4. `tests/SMOKE_CHECKLIST.md` Claude pre + positive items are checked by a human (not CI)
+5. `tests/SMOKE_CHECKLIST.md` Cursor pre + positive items are checked by a human (not CI)
+6. Legal attestations and any reviewer-account credentials are completed by that human
 
 OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic or Cursor submit as OpenAI approval, or the reverse.
 

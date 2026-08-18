@@ -119,6 +119,11 @@ def check_structure() -> list[str]:
         errors.append(".cursor-plugin/plugin.json name must be massed-compute")
     if cursor_plugin.get("displayName") != "Massed Compute":
         errors.append(".cursor-plugin/plugin.json displayName must be Massed Compute")
+    logo = cursor_plugin.get("logo")
+    if not logo:
+        errors.append(".cursor-plugin/plugin.json must include logo")
+    elif not (PLUGIN / logo).is_file():
+        errors.append(f".cursor-plugin/plugin.json logo missing: {logo}")
 
     plugins = market.get("plugins") or []
     if not plugins:
@@ -148,11 +153,11 @@ def check_structure() -> list[str]:
         if not (src_path / "mcp.json").is_file():
             errors.append(f"Cursor source missing MCP config: {source}/mcp.json")
 
-    for label, payload in ((".mcp.json", mcp), ("mcp.json", cursor_mcp)):
-        servers = (payload.get("mcpServers") or {})
-        server = servers.get("massed-compute") or {}
-        if server.get("type") != "http":
-            errors.append(f"{label} massed-compute.type must be http")
+    claude_server = (mcp.get("mcpServers") or {}).get("massed-compute") or {}
+    cursor_server = (cursor_mcp.get("mcpServers") or {}).get("massed-compute") or {}
+    if claude_server.get("type") != "http":
+        errors.append(".mcp.json massed-compute.type must be http")
+    for label, server in ((".mcp.json", claude_server), ("mcp.json", cursor_server)):
         url = server.get("url") or ""
         if not str(url).startswith("https://"):
             errors.append(f"{label} url must be https")
@@ -160,6 +165,8 @@ def check_structure() -> list[str]:
         auth = headers.get("Authorization") or headers.get("authorization")
         if auth:
             errors.append(f"{label} must not ship an Authorization header")
+    if claude_server.get("url") != cursor_server.get("url"):
+        errors.append(".mcp.json and mcp.json must point at the same Massed Compute MCP URL")
 
     skills_dir = PLUGIN / "skills"
     if not skills_dir.is_dir():

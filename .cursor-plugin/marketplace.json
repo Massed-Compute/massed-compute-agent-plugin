@@ -2,7 +2,7 @@
   "name": "massed-compute",
   "owner": {
     "name": "Massed Compute",
-    "url": "https://massedcompute.com"
+    "email": "gabe@massedcompute.com"
   },
   "metadata": {
     "description": "Official Massed Compute plugin marketplace for Cursor.",
@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "massed-compute",
-      "source": "plugins/massed-compute",
+      "source": "./plugins/massed-compute",
       "description": "On-demand NVIDIA GPU VMs: inventory, launch, cost control, and safe termination via Massed Compute MCP."
     }
   ]

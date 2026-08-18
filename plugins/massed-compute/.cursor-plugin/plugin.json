@@ -5,10 +5,11 @@
   "description": "Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills.",
   "author": {
     "name": "Massed Compute",
-    "url": "https://massedcompute.com"
+    "email": "gabe@massedcompute.com"
   },
   "homepage": "https://vm-docs.massedcompute.com/docs/mcp/overview",
   "repository": "https://github.com/Massed-Compute/massed-compute-agent-plugin",
   "license": "MIT",
-  "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"]
+  "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"],
+  "logo": "skills/mc-pick-gpu/assets/icon.png"
 }
