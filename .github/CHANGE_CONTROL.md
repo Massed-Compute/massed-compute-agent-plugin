@@ -1,6 +1,6 @@
 # Change control
 
-Related ticket: MAR-19 (Claude / marketplace listing). Do not submit or change repository visibility from this branch.
+Related ticket: MAR-19 (Claude / Cursor marketplace listing). Do not submit or change repository visibility from this branch.
 
 This file does not by itself establish SOC 2 compliance.
 
@@ -12,6 +12,7 @@ This file does not by itself establish SOC 2 compliance.
 - [ ] No secrets / home paths
 - [ ] Independent reviewer named
 - [ ] Interactive OAuth listed as human follow-up unless already completed off-CI
+- [ ] Cursor smoke listed as human follow-up unless already completed off-CI
 
 ## Rollback
 

@@ -13,7 +13,7 @@ CI-safe pack checks (also `./scripts/validate.sh`):
 python3 scripts/ci_checks.py
 ```
 
-## Pre
+## Claude pre
 
 ```bash
 claude plugin validate ./plugins/massed-compute --strict
@@ -47,3 +47,29 @@ claude mcp login plugin:massed-compute:massed-compute   # interactive terminal
 
 Date: `2026-08-17`
 Result: `package validation passed; /mcp reported plugin:massed-compute:massed-compute connected; the five required read-only positive calls passed in no-session-persistence Claude CLI runs with account details suppressed. No mutation tools were allowed and no VM was launched.`
+
+## Cursor pre
+
+Run against a Cursor review profile after the Cursor package is available from `main`, or load this branch manually during review. Do not use a production personal account for mutation testing.
+
+- [ ] Cursor recognizes `plugins/massed-compute/.cursor-plugin/plugin.json`
+- [ ] Cursor loads all five skills: `setup`, `mc-pick-gpu`, `mc-launch-vms`, `mc-cost-control`, `mc-safe-terminate`
+- [ ] Cursor detects `plugins/massed-compute/mcp.json`
+- [ ] Cursor MCP connection prompts for Massed Compute auth and does not require a committed bearer token
+
+## Cursor positive
+
+- [ ] MCP auth completes in an interactive Cursor session
+- [ ] `gpu_inventory_list` or equivalent read-only inventory call returns SKUs/prices
+- [ ] `images_list` or equivalent read-only image call returns images
+- [ ] Skills route naturally when asking Cursor to pick a GPU, explain launch steps, review cost controls, and safe-terminate an exact VM
+
+## Cursor negative
+
+- [ ] Vague "kill all VMs" in Cursor results in zero terminate calls
+- [ ] Invalid SKU/region launch request surfaces a clear error and no silent success
+
+## Cursor notes
+
+Date: `TBD`
+Result: `not yet run; required before Cursor marketplace submission.`

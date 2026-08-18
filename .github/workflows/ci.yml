@@ -97,9 +97,11 @@ jobs:
         run: |
           fail=0
 
-          # Marketplace manifest must name every plugin and point at a real source dir.
+          # Marketplace manifests must name every plugin and point at real source dirs.
           jq -e '.name and .plugins' .claude-plugin/marketplace.json > /dev/null \
-            || { echo "FAIL  marketplace.json missing name/plugins"; fail=1; }
+            || { echo "FAIL  .claude-plugin/marketplace.json missing name/plugins"; fail=1; }
+          jq -e '.name and .plugins' .cursor-plugin/marketplace.json > /dev/null \
+            || { echo "FAIL  .cursor-plugin/marketplace.json missing name/plugins"; fail=1; }
 
           while IFS= read -r src; do
             if [ ! -f "$src/.claude-plugin/plugin.json" ]; then
@@ -107,6 +109,17 @@ jobs:
               fail=1
             fi
           done < <(jq -r '.plugins[].source' .claude-plugin/marketplace.json)
+
+          while IFS= read -r src; do
+            if [ ! -f "$src/.cursor-plugin/plugin.json" ]; then
+              echo "FAIL  marketplace source '$src' has no .cursor-plugin/plugin.json"
+              fail=1
+            fi
+            if [ ! -f "$src/mcp.json" ]; then
+              echo "FAIL  marketplace source '$src' has no mcp.json"
+              fail=1
+            fi
+          done < <(jq -r '.plugins[].source' .cursor-plugin/marketplace.json)
 
           # Each plugin manifest needs name + version.
           while IFS= read -r m; do

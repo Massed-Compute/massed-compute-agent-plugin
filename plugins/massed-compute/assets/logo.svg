@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Massed Compute</title>
+  <desc id="desc">Massed Compute plugin logo</desc>
+  <rect width="512" height="512" rx="96" fill="#050505"/>
+  <path d="M128 336V176h56l72 88 72-88h56v160h-56v-80l-56 68h-32l-56-68v80h-56Z" fill="#FFFFFF"/>
+  <path d="M112 384h288v40H112v-40Z" fill="#78FF6B"/>
+  <path d="M112 88h288v40H112V88Z" fill="#78FF6B"/>
+</svg>

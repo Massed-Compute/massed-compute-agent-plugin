@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "massed-compute": {
+      "url": "https://vm.massedcompute.com/api/mcp"
+    }
+  }
+}

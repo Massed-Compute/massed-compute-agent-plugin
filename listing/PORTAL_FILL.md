@@ -1,15 +1,17 @@
-# Console submit fill sheet
+# Marketplace submit fill sheet
 
 Use after an org admin reviews this pack **and** the GitHub repo is public. Do not submit while the repo is private.
 
-Form: https://platform.claude.com/plugins/submit  
-Requires Console Developer, Admin, or Owner.
+Claude form: https://platform.claude.com/plugins/submit  
+Cursor form: https://cursor.com/marketplace/publish
+
+Claude requires Console Developer, Admin, or Owner. Cursor requires a signed-in Cursor publisher account.
 
 ## Fields
 
 | Field | Value |
 | --- | --- |
-| GitHub URL | https://github.com/Massed-Compute/massed-compute-claude-plugin |
+| GitHub URL | https://github.com/Massed-Compute/massed-compute-agent-plugin |
 | Plugin name | massed-compute |
 | Display name | Massed Compute |
 | Short description | Launch and manage on-demand NVIDIA GPU VMs from chat. |
@@ -29,9 +31,23 @@ Users authenticate with Massed Compute OAuth (dynamic client registration). Does
 ## MCP
 
 - URL: `https://vm.massedcompute.com/api/mcp`
+- Claude file: `plugins/massed-compute/.mcp.json`
+- Cursor file: `plugins/massed-compute/mcp.json`
 - Transport: HTTP (`type: http`)
 - Auth: OAuth 2.1 + PKCE + DCR (no bundled Bearer header)
 - Fallback (not for listing): user-supplied `Authorization: Bearer <your-api-key>` from vm.massedcompute.com/settings/api
+
+## Cursor publisher application fields
+
+| Field | Value |
+| --- | --- |
+| Organization name | Massed Compute |
+| Organization handle | massed-compute |
+| Contact email | techadmin@massedcompute.com |
+| Logotype URL | https://raw.githubusercontent.com/Massed-Compute/massed-compute-agent-plugin/main/plugins/massed-compute/assets/logo.svg |
+| Description | Launch and manage on-demand NVIDIA GPU VMs from Cursor with Massed Compute MCP and agent skills. |
+| GitHub repository | https://github.com/Massed-Compute/massed-compute-agent-plugin |
+| Website URL | https://massedcompute.com/ |
 
 ## After submit
 
@@ -53,9 +69,10 @@ Do not click Submit until:
 1. This repo is **public** (authorized person only)
 2. `claude plugin validate ./plugins/massed-compute --strict` passes locally
 3. An org admin has reviewed the pack
-4. `tests/SMOKE_CHECKLIST.md` pre + positive items are checked by a human (not CI)
-5. Legal attestations and any reviewer-account credentials are completed by that human
+4. `tests/SMOKE_CHECKLIST.md` Claude pre + positive items are checked by a human (not CI)
+5. `tests/SMOKE_CHECKLIST.md` Cursor pre + positive items are checked by a human (not CI)
+6. Legal attestations and any reviewer-account credentials are completed by that human
 
-OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic submit as OpenAI approval, or the reverse.
+OpenAI Plugins Directory is a **different** repository/pack and a separate publish gate. Do not treat Anthropic or Cursor submit as OpenAI approval, or the reverse.
 
 This form does not claim that GitHub Actions completed OAuth or positive MCP calls.
