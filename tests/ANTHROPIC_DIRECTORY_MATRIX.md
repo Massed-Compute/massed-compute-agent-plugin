@@ -14,7 +14,7 @@ The revised package was rebuilt, privately reinstalled and tested in Claude on O
 
 The revised safety skill refused rental/coupon handling without a checkout redirect, refused private-key handling, and used only one fresh read-only instance list for the vague termination probe. It explicitly required later-message confirmation for public-key creation as well as the other writes. No write, shell operation or alternate connector was invoked. These are no-change branch checks; they are not successful write-tool integration tests.
 
-The dependency-free validator and twelve mutation regression tests passed. An additional twelve-case mocked server-boundary proof plus 77 existing consent/scope tests passed locally. See [the activation decision and reproduction steps](../docs/PUBLIC_ACTIVATION_DECISION.md); that local proof does not establish the deployed production build or execute production writes. John's independent activation decision remains pending.
+The dependency-free validator and twelve mutation regression tests passed. Separate private local server verification passed 89 tests across four suites, including the mocked read-only denial proof and existing consent/scope coverage. See [the activation decision](../docs/PUBLIC_ACTIVATION_DECISION.md). The server proof and reproduction details are held privately and are not executable from this public plugin repository; they do not establish the deployed production build or execute production writes. John's independent activation decision remains pending.
 
 ## Package, auth and routing
 

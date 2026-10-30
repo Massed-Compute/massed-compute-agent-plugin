@@ -14,36 +14,11 @@ After review changes, a rebuilt private copy again loaded both skills. Request-s
 
 ## Server-side read-only boundary
 
-The provider consent observed during dedicated-account testing offered a Read-only access option for the directory resource. The server stores a read-only consent as a read-only grant and resolves it into the authenticated context. The directory dispatcher checks the authenticated scope before argument validation or tool-handler execution.
+The observed provider consent offers Read-only access for the directory resource. The reviewed server implementation rejects all four management writes—`instances_restart`, `instances_terminate`, `ssh_keys_create` and `ssh_keys_delete`—for a read-only grant, before executing their operations. This authorization boundary is server-side and does not depend on skill instructions.
 
-All four management writes require full access: `instances_restart`, `instances_terminate`, `ssh_keys_create` and `ssh_keys_delete`. With a read-only grant, the server implementation returns JSON-RPC Forbidden (40300) and does not call the handler. Read-only access is therefore enforced by server code, independently of either skill's prompt text.
+Private local verification passed **89 tests across four suites**, including isolated read-only denial cases and existing consent/scope coverage. The checks used synthetic authentication and mocked resource operations; no production MCP request or resource change was made. The test evidence and maintainer reproduction details are held privately. This public plugin repository does not contain an executable server test harness.
 
-Evidence inspected in the VM Marketplace repository at main commit `d1a8b7280f7e87763096a3823615efc262412494`:
-
-- `app/api/oauth/authorize/decision/route.ts`: stores read-only unless write scope was requested and full access explicitly selected; reconciles the persisted grant with consent.
-- `app/api/mcp/_lib/resolveAuth.ts`: carries the grant's read-only value into the authenticated context.
-- `app/api/mcp/_lib/registry.ts`: marks all four write tools as requiring full access.
-- `app/api/mcp/_lib/dispatcher.ts`: rejects insufficient scope before argument processing and handler execution.
-- `app/api/mcp/directory/route.ts`: uses the directory surface of this shared handler.
-
-Those authorization files and existing consent/scope tests were compared with the locally tested checkout and matched that main revision. No server source was changed or deployed for this PR.
-
-### Reproducible local proof
-
-`tests/public_directory_readonly.test.ts` adds twelve isolated tests: all four writes are denied before their handlers in both dispatcher protocol modes and at the directory HTTP boundary. Database access is prohibited by mocks, all write adapters are mocked, and only synthetic authentication data is used. It makes no production MCP requests and creates no resources.
-
-An authorized maintainer with the VM Marketplace checkout and its dependencies can reproduce the proof. From that checkout, set `MC_PLUGIN_CHECKOUT` to this plugin repository's absolute path, then run:
-
-```sh
-node node_modules/jest/bin/jest.js --runInBand \
-  --roots "$PWD" "$MC_PLUGIN_CHECKOUT/tests" \
-  --runTestsByPath "$MC_PLUGIN_CHECKOUT/tests/public_directory_readonly.test.ts" \
-  "$PWD/__tests__/api/mcp/mcpDirectorySurface.test.ts" \
-  "$PWD/__tests__/api/mcp/resolveAuth.test.ts" \
-  "$PWD/__tests__/api/oauth/decision.test.ts"
-```
-
-The twelve proof cases plus 77 existing consent/scope/directory cases passed locally: **89 tests, four suites**. The proof uses the server checkout's Jest configuration; it is intentionally not part of this plugin's dependency-free CI and does not test a deployed production build. Deployment identity and production denial behavior must be confirmed by an authorized maintainer before public submission. No mutation call was sent to production to manufacture that evidence.
+Maintainer-only server context: [VM Marketplace PR #646](https://github.com/Massed-Compute/vm-marketplace/pull/646). That link identifies existing server work; it does not claim the new local proof harness is merged there, or that its tests verified a production deployment. An authorized maintainer must confirm the deployed read-only denial boundary before public submission. No server source was changed or deployed for this plugin PR.
 
 ## Claude write-tool approvals
 
