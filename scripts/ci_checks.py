@@ -16,8 +16,13 @@ PLUGIN_JSON = PLUGIN / ".claude-plugin" / "plugin.json"
 CURSOR_PLUGIN_JSON = PLUGIN / ".cursor-plugin" / "plugin.json"
 MCP_JSON = PLUGIN / ".mcp.json"
 CURSOR_MCP_JSON = PLUGIN / "mcp.json"
+DIRECTORY = ROOT / "plugins" / "massed-compute-directory"
+DIRECTORY_MANIFEST = DIRECTORY / ".claude-plugin" / "plugin.json"
+DIRECTORY_MCP = DIRECTORY / ".mcp.json"
 
 JSON_FILES = (
+    DIRECTORY_MANIFEST,
+    DIRECTORY_MCP,
     MCP_JSON,
     CURSOR_MCP_JSON,
     PLUGIN_JSON,
@@ -27,6 +32,7 @@ JSON_FILES = (
 )
 
 SCAN_ROOTS = (
+    DIRECTORY,
     PLUGIN,
     ROOT / ".claude-plugin",
     ROOT / ".cursor-plugin",
@@ -103,6 +109,26 @@ def check_structure() -> list[str]:
             errors.append(f"missing {path.relative_to(ROOT)}")
     if errors:
         return errors
+
+    directory_plugin = json.loads(DIRECTORY_MANIFEST.read_text(encoding="utf-8"))
+    directory_mcp = json.loads(DIRECTORY_MCP.read_text(encoding="utf-8"))
+    if directory_plugin.get("name") != "massed-compute-directory":
+        errors.append("directory plugin name must be massed-compute-directory")
+    if directory_plugin.get("defaultEnabled") is not True:
+        errors.append("public directory plugin must activate after explicit installation")
+    if directory_plugin.get("privacyPolicyUrl") != "https://massedcompute.com/legal/privacy-policy/":
+        errors.append("directory plugin must explicitly link the privacy policy")
+    servers = directory_mcp.get("mcpServers") or {}
+    server = servers.get("massed-compute-directory") or {}
+    if set(servers) != {"massed-compute-directory"}:
+        errors.append("directory package must reference only the public management server")
+    if server.get("url") != "https://vm.massedcompute.com/api/mcp/directory" or server.get("type") != "http":
+        errors.append("directory server must use the HTTPS HTTP directory endpoint")
+    if server.get("headers"):
+        errors.append("directory package must not bundle authentication headers")
+    for rel in ("README.md", "LICENSE", "assets/icon.png", "skills/mc-existing-vms/SKILL.md", "skills/mc-safe-changes/SKILL.md"):
+        if not (DIRECTORY / rel).is_file():
+            errors.append(f"directory package missing {rel}")
 
     plugin = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
     cursor_plugin = json.loads(CURSOR_PLUGIN_JSON.read_text(encoding="utf-8"))

@@ -6,6 +6,7 @@ cd "$root"
 python3 "$root/scripts/ci_checks.py"
 
 if command -v claude >/dev/null 2>&1; then
+  claude plugin validate ./plugins/massed-compute-directory --strict
   claude plugin validate ./plugins/massed-compute --strict
   claude plugin validate . --strict
 else

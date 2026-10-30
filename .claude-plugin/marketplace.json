@@ -10,6 +10,14 @@
   },
   "plugins": [
     {
+      "name": "massed-compute-directory",
+      "description": "Inspect and manage existing Massed Compute VMs and SSH public keys with confirmed changes.",
+      "version": "1.0.2",
+      "source": "./plugins/massed-compute-directory",
+      "category": "developer-tools",
+      "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"]
+    },
+    {
       "name": "massed-compute",
       "description": "On-demand NVIDIA GPU VMs — inventory, launch, cost control, and safe terminate via Massed Compute MCP.",
       "version": "1.0.0",

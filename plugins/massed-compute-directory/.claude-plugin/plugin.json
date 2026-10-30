@@ -1,0 +1,16 @@
+{
+  "name": "massed-compute-directory",
+  "version": "1.0.2",
+  "description": "Inspect and manage existing Massed Compute VMs and SSH public keys with confirmed changes.",
+  "author": {
+    "name": "Massed Compute",
+    "url": "https://massedcompute.com/"
+  },
+  "homepage": "https://vm-docs.massedcompute.com/docs/mcp/overview",
+  "repository": "https://github.com/Massed-Compute/massed-compute-agent-plugin",
+  "license": "MIT",
+  "privacyPolicyUrl": "https://massedcompute.com/legal/privacy-policy/",
+  "icon": "./assets/icon.png",
+  "keywords": ["gpu", "nvidia", "vm", "mcp", "cloud"],
+  "defaultEnabled": true
+}

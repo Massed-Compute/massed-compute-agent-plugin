@@ -1,5 +1,17 @@
 # Massed Compute — AI agent plugin
 
+## Public directory draft: 1.0.2
+
+The public existing-resource package is `plugins/massed-compute-directory`. It uses `https://vm.massedcompute.com/api/mcp/directory` and provides two skills for inspection and explicitly confirmed changes. It does not create VMs or expose billing, coupons, recipes or SSH execution. See its [README](plugins/massed-compute-directory/README.md) and [Anthropic review fill sheet](listing/ANTHROPIC_DIRECTORY_1.0.2.md).
+
+Anthropic's directory submission must point to the folder holding that package's `.claude-plugin/plugin.json`, not the repository root. The root manifest describes a marketplace. Anthropic's current [directory instructions](https://claude.com/docs/directory/publish) also require a separate MCP connector submission for a remote server the publisher owns. Repair the portal's GitHub authorization before submission. Current local checks do not prove Claude OAuth, policy acceptance or a completed security scan.
+
+This is a local draft. No repository push, directory submission or publication follows from preparing it.
+
+## Legacy full connector: 1.0.0
+
+The remaining instructions describe the existing full `plugins/massed-compute` package and its earlier marketplace workflow. They are not the current public-directory submission checklist; use the 1.0.2 fill sheet above for that submission.
+
 Official plugin for [Claude Code](https://code.claude.com), Claude Cowork, and Cursor: remote Massed Compute MCP plus skills for GPU pick, launch, cost control, and safe terminate.
 
 This is **not** a Claude Connectors Directory listing. Connectors (Claude.ai / Desktop / mobile) are a separate portal.
