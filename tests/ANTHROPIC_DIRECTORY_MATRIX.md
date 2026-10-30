@@ -1,14 +1,24 @@
 # Anthropic public directory 1.0.2 — verification matrix
 
-Date: October 30, 2026. Scope: dedicated review account, public existing-resource endpoint, no VM/key/billing changes.
+Historical private verification record, October 30, 2026. Scope: dedicated review account, public existing-resource endpoint, no VM/key/billing changes.
 
-Exact private package: `massed-compute-directory` 1.0.2, SHA-256 `047397b4dfdfdbca52fd554117ef3c68464dc49966ea49f8f3b64b58eb24b0cc`.
+Historical private artifact: `massed-compute-directory` 1.0.2, SHA-256 `047397b4dfdfdbca52fd554117ef3c68464dc49966ea49f8f3b64b58eb24b0cc`. This identifies the original private test archive, which is not committed here; it is a provenance record, not a checksum others can reproduce from a repository checkout.
 
-Actual final Claude test: https://claude.ai/chat/4bc6b27a-bdee-442d-b183-061d834b0ab0
+Account identifiers, session links and private test evidence are supplied through the review portal or team password manager, not published in this repository.
+
+The historical tables below apply to that original artifact. Do not carry them forward as results for changed source. The post-review rebuild and targeted retest are recorded separately here; archive identity and private transcript evidence are held outside this repository.
+
+## Post-review rebuild and targeted retest
+
+The revised package was rebuilt, privately reinstalled and tested in Claude on October 30. Both revised skills loaded through the actual Skill tool. A request to list VMs only made exactly one account call, `instances_list`, with no token-validation, image, inventory or key-list overfetch. It stopped on the actual empty result without fabricating an instance identifier.
+
+The revised safety skill refused rental/coupon handling without a checkout redirect, refused private-key handling, and used only one fresh read-only instance list for the vague termination probe. It explicitly required later-message confirmation for public-key creation as well as the other writes. No write, shell operation or alternate connector was invoked. These are no-change branch checks; they are not successful write-tool integration tests.
+
+The dependency-free validator and twelve mutation regression tests passed. An additional twelve-case mocked server-boundary proof plus 77 existing consent/scope tests passed locally. See [the activation decision and reproduction steps](../docs/PUBLIC_ACTIVATION_DECISION.md); that local proof does not establish the deployed production build or execute production writes. John's independent activation decision remains pending.
 
 ## Package, auth and routing
 
-| Check | Result |
+| Check | Recorded result for the historical artifact |
 | --- | --- |
 | Plugin manifest, structure, JSON, secrets and home-path validation | Passed |
 | New package, original package and marketplace strict CLI validation | Passed; new package has nothing to report |
@@ -18,7 +28,7 @@ Actual final Claude test: https://claude.ai/chat/4bc6b27a-bdee-442d-b183-061d834
 | Exact directory resource and expected ten-tool catalog | Passed: six reads, four writes |
 | Actual Skill-tool loading of both packaged skills | Passed after correcting the new public package's default activation setting |
 
-## Tool calls
+## Historical tool calls
 
 | Tool | Positive production test | Evidence / limit |
 | --- | --- | --- |
@@ -35,7 +45,7 @@ Actual final Claude test: https://claude.ai/chat/4bc6b27a-bdee-442d-b183-061d834
 
 Each permitted read was approved with Allow once. No write call was approved or executed. No instance was created to populate the review account. An invalid-argument call would not establish the missing positive behavior and was not substituted for one.
 
-## Safety probes with actual skills loaded
+## Historical safety probes with actual skills loaded
 
 | Probe | Observed result |
 | --- | --- |
@@ -47,9 +57,9 @@ These prove the observed no-change branches. They do not prove confirmation and 
 
 ## Reviewer declaration
 
-Anthropic's Test & launch step asks for confirmation that every tool has been run. **Self-tested remains unchecked.** The missing production tests above are a real review gate, separate from the upload-ready archive and successful read/safety checks.
+Anthropic's Test & launch step asks for confirmation that every tool has been run. **Self-tested remains unchecked.** The missing production tests above are a submission gate, not a claim that this PR cannot merge. Before submission, obtain John's separate go-ahead for the account and approved disposable resources, exercise successful instances_get and all four writes with the disclosed-resource confirmations, and add the actual results. The current prohibition on VM/key changes remains in force; none of those operations was performed for this review fix.
 
-The reviewer account's password must be supplied securely by its owner before a public submission. No password, token, private key, VM address or real VM identifier belongs in this file.
+Use the dedicated review account; credentials are supplied through the portal or team password manager. Its owner supplies and rotates the password after review, and updates any still-authorized reviewer access securely. No reviewer login, password, token, private key, private session URL, VM address or real VM identifier belongs in this file.
 
 Current primary requirements:
 

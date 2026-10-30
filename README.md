@@ -1,12 +1,16 @@
 # Massed Compute — AI agent plugin
 
-## Public directory draft: 1.0.2
+## Public directory package: 1.0.2
+
+The [activation decision](docs/PUBLIC_ACTIVATION_DECISION.md) records the author proposal, server-side scope evidence, Claude write-approval observation and pending independent sign-off.
 
 The public existing-resource package is `plugins/massed-compute-directory`. It uses `https://vm.massedcompute.com/api/mcp/directory` and provides two skills for inspection and explicitly confirmed changes. It does not create VMs or expose billing, coupons, recipes or SSH execution. See its [README](plugins/massed-compute-directory/README.md) and [Anthropic review fill sheet](listing/ANTHROPIC_DIRECTORY_1.0.2.md).
 
-Anthropic's directory submission must point to the folder holding that package's `.claude-plugin/plugin.json`, not the repository root. The root manifest describes a marketplace. Anthropic's current [directory instructions](https://claude.com/docs/directory/publish) also require a separate MCP connector submission for a remote server the publisher owns. Repair the portal's GitHub authorization before submission. Current local checks do not prove Claude OAuth, policy acceptance or a completed security scan.
+Anthropic's directory submission must point to the folder holding that package's `.claude-plugin/plugin.json`, not the repository root. The root manifest describes a marketplace. Anthropic's current [directory instructions](https://claude.com/docs/directory/publish) also require a separate MCP connector submission for a remote server the publisher owns. Verify the publisher's repository access and the exact release commit before submission. Local/CI validation does not prove production OAuth, policy acceptance or a completed directory security scan.
 
-This is a local draft. No repository push, directory submission or publication follows from preparing it.
+Repository review and release, directory submission, and directory publication are separate approval steps. A merge does not authorize a marketplace submission or publication. See the [verification matrix](tests/ANTHROPIC_DIRECTORY_MATRIX.md) for recorded coverage and the remaining submission gate.
+
+Cursor changes are intentionally outside the public Claude package's scope. Its marketplace and legacy full-connector files remain unchanged.
 
 ## Legacy full connector: 1.0.0
 

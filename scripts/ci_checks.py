@@ -40,6 +40,7 @@ SCAN_ROOTS = (
     ROOT / "listing",
     ROOT / "scripts",
     ROOT / "tests",
+    ROOT / "docs",
     ROOT / "README.md",
     ROOT / "CHANGELOG.md",
     ROOT / "CONTRIBUTING.md",
@@ -66,7 +67,7 @@ PLACEHOLDER_OK = (
 HOME_RE = re.compile(r"(?:/Users|/home)/[A-Za-z0-9._-]+")
 HOME_ALLOW = {"you", "username", "name", "user", "<name>"}
 
-TEXT_SUFFIX = {".md", ".json", ".yml", ".yaml", ".txt", ".sh", ".py", ".toml"}
+TEXT_SUFFIX = {".md", ".json", ".yml", ".yaml", ".txt", ".sh", ".py", ".toml", ".ts"}
 
 
 def iter_scan_files() -> list[Path]:
@@ -96,14 +97,87 @@ def check_json() -> list[str]:
             errors.append(f"missing JSON: {path.relative_to(ROOT)}")
             continue
         try:
-            json.loads(path.read_text(encoding="utf-8"))
+            value = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(value, dict):
+                errors.append(f"JSON object required: {path.relative_to(ROOT)}")
         except json.JSONDecodeError as exc:
             errors.append(f"invalid JSON {path.relative_to(ROOT)}: {exc}")
     return errors
 
 
-def check_structure() -> list[str]:
+def check_directory_skill(path: Path) -> list[str]:
+    """Validate this package's scalar-only YAML frontmatter without a YAML dependency.
+
+    Public skills use exactly name and description. Scalars may be plain text
+    starting with a letter, JSON double-quoted strings, or YAML single-quoted
+    strings. Other YAML forms
+    are rejected explicitly rather than guessed at by a partial YAML parser.
+    """
+    label = str(path.relative_to(ROOT))
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != "---":
+        return [f"{label}: missing frontmatter opening delimiter"]
+    try:
+        end = lines.index("---", 1)
+    except ValueError:
+        return [f"{label}: missing frontmatter closing delimiter"]
+    values: dict[str, str] = {}
     errors: list[str] = []
+    for line in lines[1:end]:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = re.fullmatch(r"([A-Za-z][A-Za-z0-9_-]*):[ ]+(.*)", line)
+        if not match:
+            errors.append(f"{label}: frontmatter must use single-line text fields")
+            continue
+        key, raw = match.groups()
+        raw = raw.strip()
+        if key not in {"name", "description"}:
+            errors.append(f"{label}: unexpected frontmatter field {key}")
+            continue
+        if key in values:
+            errors.append(f"{label}: duplicate frontmatter field {key}")
+            continue
+        if raw.startswith('"'):
+            try:
+                value = json.loads(raw)
+            except json.JSONDecodeError:
+                errors.append(f"{label}: invalid quoted text for {key}")
+                continue
+        elif raw.startswith("'"):
+            if not re.fullmatch(r"'(?:[^']|'')*'", raw):
+                errors.append(f"{label}: invalid quoted text for {key}")
+                continue
+            value = raw[1:-1].replace("''", "'")
+        else:
+            value = re.sub(r"\s+#.*$", "", raw)
+            if (
+                not value
+                or not re.match(r"[A-Za-z]", value)
+                or re.search(r":(?:\s|$)", value)
+                or value.lower() in {"null", "~", "true", "false", "yes", "no", "on", "off"}
+            ):
+                errors.append(f"{label}: {key} must be text, not another YAML value")
+                continue
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{label}: {key} must be non-empty text")
+            continue
+        values[key] = value
+    for key in ("name", "description"):
+        if key not in values:
+            errors.append(f"{label}: missing valid {key}")
+    if "name" in values and (
+        not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", values["name"])
+        or values["name"] != path.parent.name
+    ):
+        errors.append(f"{label}: name must match its kebab-case skill directory")
+    return errors
+
+
+def check_structure() -> list[str]:
+    errors = check_json()
+    if errors:
+        return errors
     for path in JSON_FILES:
         if not path.is_file():
             errors.append(f"missing {path.relative_to(ROOT)}")
@@ -112,23 +186,46 @@ def check_structure() -> list[str]:
 
     directory_plugin = json.loads(DIRECTORY_MANIFEST.read_text(encoding="utf-8"))
     directory_mcp = json.loads(DIRECTORY_MCP.read_text(encoding="utf-8"))
+    if not isinstance(directory_plugin, dict) or not isinstance(directory_mcp, dict):
+        return ["directory manifest and MCP configuration must be JSON objects"]
     if directory_plugin.get("name") != "massed-compute-directory":
         errors.append("directory plugin name must be massed-compute-directory")
+    version = directory_plugin.get("version")
+    if not isinstance(version, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?", version):
+        errors.append("directory plugin must have a release version")
     if directory_plugin.get("defaultEnabled") is not True:
         errors.append("public directory plugin must activate after explicit installation")
     if directory_plugin.get("privacyPolicyUrl") != "https://massedcompute.com/legal/privacy-policy/":
         errors.append("directory plugin must explicitly link the privacy policy")
     servers = directory_mcp.get("mcpServers") or {}
+    if not isinstance(servers, dict):
+        errors.append("directory mcpServers must be a JSON object")
+        servers = {}
     server = servers.get("massed-compute-directory") or {}
+    if not isinstance(server, dict):
+        errors.append("directory server configuration must be a JSON object")
+        server = {}
     if set(servers) != {"massed-compute-directory"}:
         errors.append("directory package must reference only the public management server")
     if server.get("url") != "https://vm.massedcompute.com/api/mcp/directory" or server.get("type") != "http":
         errors.append("directory server must use the HTTPS HTTP directory endpoint")
-    if server.get("headers"):
-        errors.append("directory package must not bundle authentication headers")
+    if set(directory_mcp) != {"mcpServers"}:
+        errors.append("directory MCP configuration must contain only mcpServers")
+    # This package is pure provider OAuth: no headers, env, helper commands,
+    # alternate launchers or other authentication/configuration escape paths.
+    for key in sorted(set(server) - {"type", "url"}):
+        errors.append(f"directory server must not configure {key}; only type and url are allowed")
     for rel in ("README.md", "LICENSE", "assets/icon.png", "skills/mc-existing-vms/SKILL.md", "skills/mc-safe-changes/SKILL.md"):
         if not (DIRECTORY / rel).is_file():
             errors.append(f"directory package missing {rel}")
+    skills = DIRECTORY / "skills"
+    if skills.is_dir():
+        for skill_dir in sorted(p for p in skills.iterdir() if p.is_dir()):
+            skill_path = skill_dir / "SKILL.md"
+            if not skill_path.is_file():
+                errors.append(f"directory skill missing {skill_path.relative_to(ROOT)}")
+            else:
+                errors.extend(check_directory_skill(skill_path))
 
     plugin = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
     cursor_plugin = json.loads(CURSOR_PLUGIN_JSON.read_text(encoding="utf-8"))
@@ -160,8 +257,21 @@ def check_structure() -> list[str]:
         errors.append(".cursor-plugin/plugin.json logo must use a dedicated plugin asset, not a skill icon")
 
     plugins = market.get("plugins") or []
+    if not isinstance(plugins, list) or any(not isinstance(entry, dict) for entry in plugins):
+        errors.append("marketplace plugins must be a list of JSON objects")
+        plugins = []
     if not plugins:
         errors.append(".claude-plugin/marketplace.json has no plugins")
+    directory_entries = [entry for entry in plugins if entry.get("name") == "massed-compute-directory"]
+    if len(directory_entries) != 1:
+        errors.append("marketplace must contain exactly one massed-compute-directory entry")
+    else:
+        entry = directory_entries[0]
+        if entry.get("name") != directory_plugin.get("name") or entry.get("version") != directory_plugin.get("version"):
+            errors.append("directory marketplace name/version must match the plugin manifest")
+        expected_source = "./" + DIRECTORY.relative_to(ROOT).as_posix()
+        if entry.get("source") != expected_source:
+            errors.append(f"directory marketplace source must be {expected_source}")
     for entry in plugins:
         source = entry.get("source")
         if not source:

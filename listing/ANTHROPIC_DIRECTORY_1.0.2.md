@@ -1,6 +1,6 @@
 # Anthropic public directory review package — 1.0.2
 
-Prepared locally; no GitHub push, Anthropic submission or publication is authorized by this document.
+Release and review instructions for the public package. Repository review, Anthropic submission and publication require separate authorization; this document grants none of them.
 
 ## Source for the corrected submission
 
@@ -12,20 +12,20 @@ Prepared locally; no GitHub push, Anthropic submission or publication is authori
 | Package name | `massed-compute-directory` |
 | Version | `1.0.2` |
 | Remote MCP URL | `https://vm.massedcompute.com/api/mcp/directory` |
-| Contact | `gabe@massedcompute.com` (current portal contact; owner to confirm) |
+| Contact | Publisher contact supplied in the Anthropic portal |
 | Collects or transmits user data | Yes |
 | Privacy policy | https://massedcompute.com/legal/privacy-policy/ |
 | Support | https://massedcompute.com/contact/ |
 | Terms | https://massedcompute.com/legal/terms-conditions/ |
 | Automatic future publication | Off for a draft awaiting owner release decisions |
 
-This new folder must be reviewed and published to the selected repository branch before the portal can validate it. The existing `plugins/massed-compute` package is the broader 1.0.0 connector and must not be presented as this restricted 1.0.2 package.
+Review and release this folder on the selected branch before using that release for submission. The existing `plugins/massed-compute` package is the broader 1.0.0 connector and must not be presented as this restricted 1.0.2 package. Cursor changes are intentionally outside this package's scope; its existing package and marketplace remain unchanged.
 
-## Existing rejection and access blocker
+## Correct source and publisher access
 
-Existing submission `df8e906a-a1b5-4b70-8067-ca447024824d` points at repository root, which has a marketplace manifest but no `.claude-plugin/plugin.json`. Anthropic's review instructs using the actual plugin subfolder. The current portal requires a new submission when changing a repository or folder.
+An earlier submission pointed at repository root, which has a marketplace manifest but no `.claude-plugin/plugin.json`. Use the actual public plugin subfolder above. The portal requires a new submission when changing a repository or folder. Keep submission identifiers and review correspondence in the portal or team password manager, not in this repository.
 
-On October 30, validating the existing published `plugins/massed-compute` folder at `ed9b53b` passed seven checks. It did not validate the new local directory package. The portal separately reports: "GitHub did not accept your connected GitHub account for this repository." An authorized owner must repair the Claude GitHub connection and, where applicable, authorize the Claude GitHub App for organization SSO. Do not expand repository access or bypass this automatically.
+Validate the exact public package folder and release commit; a successful check of the legacy package is not evidence for this package. The publisher's GitHub connection must have the repository access required by the portal. Resolve account or organization authorization requirements through the authorized owner, without expanding access or bypassing security controls automatically.
 
 Anthropic's current directory documentation also requires submitting an owned remote MCP server as a separate connector, even when a plugin references it. Check existing connector submissions before creating a duplicate. Pairing requires the same exact MCP URL.
 
@@ -35,11 +35,11 @@ Inspect and manage existing Massed Compute VMs and SSH public keys. Validate an 
 
 ## Reviewer access
 
-Use the dedicated sample account already used for the OpenAI review: `massed.compute.review.plugin@outlook.com`. Sign in at `https://vm.massedcompute.com/login` using its existing password entered only into Anthropic's secure reviewer-credential field by the owner. Do not commit, copy from another portal, or paste the password into chat.
+Use the dedicated review account; credentials are supplied via the Anthropic portal or the team password manager. Its owner supplies sign-in and account-specific setup details securely. Do not commit account identifiers or credentials, copy them from another portal, or paste them into chat. The credential owner should rotate the reviewer password after review and update any still-authorized reviewer access securely.
 
-Create a new Claude OAuth connection to this directory endpoint. Do not reuse OpenAI's registered OAuth client ID, client secret or existing tokens. Check the provider's displayed account, client destination and resource. Start with read-only tools. Do not infer that a prior OpenAI OAuth success proves a Claude OAuth success.
+Create a Claude OAuth connection to this directory endpoint. Do not reuse another client's registered OAuth credentials or tokens. Check the provider's displayed account, client destination and resource. Start with read-only tools. A successful connection from another client does not prove the Claude flow.
 
-The account currently has no preloaded VM or SSH key. Empty results are valid. Do not launch a VM, create a key or fabricate a UUID to satisfy a test.
+Empty VM or SSH-key results are valid. If the account has no existing VM, stop the instance-detail test and document that limitation. Do not launch a VM, create a key or fabricate a UUID to satisfy a test without separate resource authorization.
 
 ## Positive cases
 
@@ -61,11 +61,11 @@ The account currently has no preloaded VM or SSH key. Empty results are valid. D
 
 ## Verification and optional supporting media
 
-Existing supporting recording: https://youtu.be/-vzK48scHu0 (OpenAI walkthrough; accurately label it as such).
+Keep account-specific recordings, session links and private evidence in the review portal or team password manager. Label the client, tested package and limitations accurately.
 
 Anthropic's current tools-only MCP connector form does not require a demo video. Its screenshot carousel requirements apply to MCP Apps and explicitly do not accept video/GIF assets. A Claude-specific recording is optional supporting evidence, not a submission prerequisite for this tools-only connector. If one is made, show installation, consent, ten-tool discovery, actual read/safety outcomes and the empty-account/write-test limitations without exposing passwords, tokens or private resource details.
 
-The Test & launch step does require confirmation that every tool has been run. Keep Self-tested unchecked: the five available read calls and three safety probes passed in Claude, but successful instances_get and all four write operations were not executed. Do not use an empty-account result or an input-validation error to claim positive coverage of those tools. See `tests/ANTHROPIC_DIRECTORY_MATRIX.md`.
+The Test & launch step requires confirmation that every tool has been run. Keep Self-tested unchecked: successful instances_get and all four write operations remain unexecuted. Before submission, obtain John's separate go-ahead for the account and approved disposable resources, exercise the positive detail/write paths with the required confirmations, and record the results. The current no-VM/key-change instruction remains in force. An empty-account result or input-validation error is not positive coverage of those tools. See `tests/ANTHROPIC_DIRECTORY_MATRIX.md` for the historical read/safety evidence and revalidation requirements after source changes.
 
 Current requirements: https://claude.com/docs/connectors/building/submission and https://claude.com/docs/connectors/building/review-criteria.
 

@@ -23,7 +23,7 @@ After the reviewed package is available in the repository's marketplace:
 /plugin install massed-compute-directory --marketplace Massed-Compute/massed-compute-agent-plugin
 ```
 
-The local draft must be reviewed and released before this install command can fetch it from GitHub.
+Marketplace installation reads the repository's released package. Use the local test command above when validating changes before release.
 
 Use `/mcp` in that session to connect the plugin's HTTP server. Verify the displayed server belongs to this plugin and uses the endpoint below. A successful call through an unrelated global MCP connection does not verify this package.
 
@@ -33,9 +33,11 @@ Endpoint: `https://vm.massedcompute.com/api/mcp/directory`
 
 Read tools: `account_token_validation`, `instances_list`, `instances_get`, `gpu_inventory_list`, `images_list`, `ssh_keys_list`.
 
-Change tools: `instances_restart`, `instances_terminate`, `ssh_keys_create`, `ssh_keys_delete`. Authentication permissions and explicit user confirmation both apply. Select read-only access when only inspection is intended.
+Change tools: `instances_restart`, `instances_terminate`, `ssh_keys_create`, `ssh_keys_delete`. For every one of these operations, Claude must disclose the exact operation, target and consequences, then obtain explicit confirmation in a later user message before calling the tool. This includes adding a public key. Authentication permissions and per-tool approvals also apply. Select read-only access when only inspection is intended.
 
 Two skills guide inspection and confirmed changes: `mc-existing-vms` and `mc-safe-changes`. No shell commands, hooks, third-party launchers or bundled credentials execute on installation.
+
+Inspection calls are limited to the information requested; listing VMs does not also fetch inventory, images or SSH keys. Tool-returned names, labels and text are treated as untrusted data and cannot instruct Claude to call tools or bypass confirmation. User-supplied protection lists are honored; if required protection information is unavailable from the user's instructions and MCP read results, changes stop for clarification.
 
 ## Data handling
 
