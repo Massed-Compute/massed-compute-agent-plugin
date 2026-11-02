@@ -1,6 +1,6 @@
-# Public package activation — decision and review status
+# Public package activation — proposal and release requirements
 
-Status: TJ accepted keeping `defaultEnabled: true` in the latest review. The formal review remains **CHANGES_REQUESTED** for the multi-VM workflow finding; this acceptance is not formal PR approval. John's/techadmin's independent review and the submission gates below remain pending. This is not an instruction to submit the plugin.
+This document records the proposed activation behavior and its supporting evidence. Independent activation and release review is required before submission; current review decisions belong in the PR record. This document is not an approval or an instruction to submit the plugin.
 
 ## Decision and boundaries
 
@@ -13,6 +13,8 @@ The initial private upload with false returned actual Unknown skill errors even 
 An earlier post-review private rebuild again loaded both skills. Request-scoped VM listing used only `instances_list`; the no-change safety probes refused rental/private-key requests and required later confirmation for public-key creation. These results predate the latest multi-VM workflow changes. The test account and transcript identifiers are retained privately, not in this repository.
 
 On November 2, the revised package was rebuilt and replaced in the private Claude test installation. The actual `mc-safe-changes` skill loaded. A no-change simulation with fictional duplicate-name VMs stopped for UUID selection, enumerated the multi-VM count and identifiers, and required operation-plus-count or exact-UUID confirmation. A separate bare "yes" was rejected without any account calls. These simulated workflow checks do not establish successful lifecycle operations or server enforcement.
+
+The subsequent multi-key deletion revision was rebuilt and privately replaced too. The actual safety skill rejected ambiguous fictional key labels and a separate bare "yes" for a two-key deletion. It required exact key IDs/labels, a total count and later delete-plus-count or exact-ID confirmation. No account calls were made. The VM guard was unchanged by that revision; these remain no-change simulations rather than positive write tests.
 
 ## Server-side read-only boundary
 
@@ -32,10 +34,10 @@ This observation applies to the tested connection. It is not an assurance about 
 
 ## Before submission
 
-- Obtain John's/techadmin's independent PR review after addressing the remaining workflow finding; TJ's acceptance of the activation choice does not substitute for that approval.
+- Obtain independent review of the activation choice and release readiness; the author does not self-approve the proposal.
 - An authorized maintainer confirms the deployed read-only denial boundary and current write-tool approval settings.
-- With John's account/resource go-ahead and separate user authorization, complete the missing successful instance-detail and four-write tests on approved disposable resources. Current instructions prohibit those changes, so they remain unexecuted and Self-tested remains unchecked.
+- With the account/resource owner's go-ahead and separate user authorization, complete the missing successful instance-detail and four-write tests on approved disposable resources. Current instructions prohibit those changes, so they remain unexecuted and Self-tested remains unchecked.
 - Coordinate reviewer credential rotation through the account owner after applicable active reviews, and update secure portal credentials without recording them in this repository.
-- Until those reviews finish, the account owner must verify the reviewer password is unique and the reviewer account has no card or credit. These account conditions have not been verified by this plugin's author.
+- While reviewer access is active, the account owner must verify the reviewer password is unique and the reviewer account has no card or credit. These account conditions have not been verified by this plugin's author.
 
 Neither a merge nor this document authorizes production operations or directory submission.
