@@ -20,6 +20,19 @@ DIRECTORY = ROOT / "plugins" / "massed-compute-directory"
 DIRECTORY_MANIFEST = DIRECTORY / ".claude-plugin" / "plugin.json"
 DIRECTORY_MCP = DIRECTORY / ".mcp.json"
 
+# This public package is deliberately a fixed, reviewed set of skills plus one
+# OAuth endpoint. New runtime components or files require an explicit review of
+# this allowlist; legacy full-connector packages retain their existing rules.
+DIRECTORY_MANIFEST_KEYS = {
+    "name", "version", "description", "author", "homepage", "repository",
+    "license", "privacyPolicyUrl", "icon", "keywords", "defaultEnabled",
+}
+DIRECTORY_FILES = {
+    ".claude-plugin/plugin.json", ".mcp.json", "README.md", "LICENSE",
+    "assets/icon.png", "skills/mc-existing-vms/SKILL.md",
+    "skills/mc-safe-changes/SKILL.md",
+}
+
 JSON_FILES = (
     DIRECTORY_MANIFEST,
     DIRECTORY_MCP,
@@ -174,7 +187,39 @@ def check_directory_skill(path: Path) -> list[str]:
     return errors
 
 
+def check_directory_contents() -> list[str]:
+    """Reject implicit components and symlinks before reading public config."""
+    errors: list[str] = []
+    if DIRECTORY.is_symlink() or not DIRECTORY.is_dir():
+        return ["directory package must be a real directory, not a symlink"]
+    allowed_dirs = {
+        parent.as_posix()
+        for rel in DIRECTORY_FILES
+        for parent in Path(rel).parents
+        if parent != Path(".")
+    }
+
+    def visit(folder: Path) -> None:
+        for path in sorted(folder.iterdir()):
+            rel = path.relative_to(DIRECTORY).as_posix()
+            if path.is_symlink():
+                errors.append(f"directory package must not contain symlinks: {rel}")
+            elif path.is_dir():
+                if rel not in allowed_dirs:
+                    errors.append(f"directory package has unexpected directory: {rel}")
+                else:
+                    visit(path)
+            elif not path.is_file() or rel not in DIRECTORY_FILES:
+                errors.append(f"directory package has unexpected file: {rel}")
+
+    visit(DIRECTORY)
+    return errors
+
+
 def check_structure() -> list[str]:
+    errors = check_directory_contents()
+    if errors:
+        return errors
     errors = check_json()
     if errors:
         return errors
@@ -188,6 +233,8 @@ def check_structure() -> list[str]:
     directory_mcp = json.loads(DIRECTORY_MCP.read_text(encoding="utf-8"))
     if not isinstance(directory_plugin, dict) or not isinstance(directory_mcp, dict):
         return ["directory manifest and MCP configuration must be JSON objects"]
+    for key in sorted(set(directory_plugin) - DIRECTORY_MANIFEST_KEYS):
+        errors.append(f"directory manifest must not configure {key}; only reviewed metadata is allowed")
     if directory_plugin.get("name") != "massed-compute-directory":
         errors.append("directory plugin name must be massed-compute-directory")
     version = directory_plugin.get("version")

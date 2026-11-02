@@ -35,6 +35,84 @@ class PublicPackageChecks(unittest.TestCase):
     def test_release_package_passes(self) -> None:
         self.assertEqual([], self.checks.check_structure())
 
+    def test_manifest_cannot_override_checked_runtime_configuration(self) -> None:
+        relative = "plugins/massed-compute-directory/.claude-plugin/plugin.json"
+        original = self.read_json(relative)
+        bypasses = (
+            ("mcpServers", {"other": {"type": "http", "url": "https://example.com/mcp"}}),
+            ("mcpServers", "./alternate-mcp.json"),
+            ("hooks", {"SessionStart": [{"hooks": [{"type": "command", "command": "echo fixture"}]}]}),
+            ("hooks", "./hooks.json"),
+            ("commands", "./extra-commands"),
+            ("agents", "./extra-agents"),
+            ("skills", "./extra-skills"),
+            ("lspServers", {}),
+        )
+        for key, value in bypasses:
+            with self.subTest(key=key, value=value):
+                manifest = original.copy()
+                manifest[key] = value
+                self.write_json(relative, manifest)
+                errors = self.checks.check_structure()
+                self.assertTrue(any(f"manifest must not configure {key}" in error for error in errors), errors)
+
+    def test_unreviewed_package_files_are_rejected(self) -> None:
+        for relative in ("hooks/hooks.json", "commands/extra.md", "agents/extra.md",
+                         "skills/mc-existing-vms/run.sh", "alternate-mcp.json"):
+            with self.subTest(relative=relative):
+                path = self.package / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("fixture", encoding="utf-8")
+                try:
+                    self.assertTrue(self.checks.check_structure(), f"accepted {relative}")
+                finally:
+                    path.unlink()
+                    if path.parent.name in {"hooks", "commands", "agents"}:
+                        path.parent.rmdir()
+
+    def test_implicit_component_directories_are_rejected_even_when_empty(self) -> None:
+        for relative in ("hooks", "commands", "agents", "skills/unreviewed-skill"):
+            with self.subTest(relative=relative):
+                path = self.package / relative
+                path.mkdir()
+                try:
+                    self.assertTrue(self.checks.check_structure(), f"accepted {relative}")
+                finally:
+                    path.rmdir()
+
+    def test_allowed_files_cannot_be_symlinks(self) -> None:
+        for relative in (".mcp.json", ".claude-plugin/plugin.json", "skills/mc-existing-vms/SKILL.md"):
+            with self.subTest(relative=relative):
+                path = self.package / relative
+                target = self.root / "outside-package-fixture"
+                path.rename(target)
+                path.symlink_to(target)
+                try:
+                    errors = self.checks.check_structure()
+                    self.assertTrue(any("must not contain symlinks" in error for error in errors), errors)
+                finally:
+                    path.unlink()
+                    target.rename(path)
+
+    def test_package_and_allowed_directories_cannot_be_symlinks(self) -> None:
+        for path in (self.package / "skills" / "mc-existing-vms", self.package):
+            with self.subTest(path=path.name):
+                target = self.root / "outside-package-fixture"
+                path.rename(target)
+                path.symlink_to(target, target_is_directory=True)
+                try:
+                    errors = self.checks.check_structure()
+                    self.assertTrue(any("symlink" in error for error in errors), errors)
+                finally:
+                    path.unlink()
+                    target.rename(path)
+
+    def test_legacy_package_keeps_existing_component_rules(self) -> None:
+        legacy = self.root / "plugins" / "massed-compute"
+        (legacy / "commands").mkdir(exist_ok=True)
+        (legacy / "commands" / "fixture.md").write_text("fixture", encoding="utf-8")
+        self.assertEqual([], self.checks.check_structure())
+
     def test_marketplace_release_must_match_manifest(self) -> None:
         original = self.read_json(".claude-plugin/marketplace.json")
         for field, value in (("name", "other-package"), ("version", "9.9.9"), ("source", "./plugins/massed-compute")):

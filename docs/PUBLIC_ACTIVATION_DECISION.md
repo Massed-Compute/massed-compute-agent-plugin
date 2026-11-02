@@ -1,6 +1,6 @@
-# Public package activation — author proposal for John's review
+# Public package activation — decision and review status
 
-Status: author rationale recorded; **John's independent decision is pending**. This is not an approval or an instruction to submit the plugin.
+Status: TJ accepted keeping `defaultEnabled: true` in the latest review. The formal review remains **CHANGES_REQUESTED** for the multi-VM workflow finding; this acceptance is not formal PR approval. John's/techadmin's independent review and the submission gates below remain pending. This is not an instruction to submit the plugin.
 
 ## Decision and boundaries
 
@@ -10,11 +10,15 @@ The [official manifest reference](https://code.claude.com/docs/en/plugins/manife
 
 The initial private upload with false returned actual Unknown skill errors even while the UI showed enabled. Replacing that private test copy with true allowed both actual Skill-tool loads. This is observed activation evidence, not a claim that all clients behave identically. Skill text is a workflow aid and is not the authorization boundary.
 
-After review changes, a rebuilt private copy again loaded both skills. Request-scoped VM listing used only `instances_list`; the no-change safety probes refused rental/private-key requests and required later confirmation for public-key creation. The test account and transcript identifiers are retained privately, not in this repository.
+An earlier post-review private rebuild again loaded both skills. Request-scoped VM listing used only `instances_list`; the no-change safety probes refused rental/private-key requests and required later confirmation for public-key creation. These results predate the latest multi-VM workflow changes. The test account and transcript identifiers are retained privately, not in this repository.
+
+On November 2, the revised package was rebuilt and replaced in the private Claude test installation. The actual `mc-safe-changes` skill loaded. A no-change simulation with fictional duplicate-name VMs stopped for UUID selection, enumerated the multi-VM count and identifiers, and required operation-plus-count or exact-UUID confirmation. A separate bare "yes" was rejected without any account calls. These simulated workflow checks do not establish successful lifecycle operations or server enforcement.
 
 ## Server-side read-only boundary
 
-The observed provider consent offers Read-only access for the directory resource. The reviewed server implementation rejects all four management writes—`instances_restart`, `instances_terminate`, `ssh_keys_create` and `ssh_keys_delete`—for a read-only grant, before executing their operations. This authorization boundary is server-side and does not depend on skill instructions.
+The previously observed provider consent offers Read-only access for the directory resource. Current fetched server source shows that read-only is preselected only when the authorization request excludes `mcp:write`. If write access is requested, the Read-only access checkbox starts unchecked and the user may select it to narrow the grant. An absent or blank scope defaults to both read and write. This describes source behavior, not a fresh observation of the deployed consent UI or the scope requested by a particular client.
+
+The reviewed server implementation rejects all four management writes—`instances_restart`, `instances_terminate`, `ssh_keys_create` and `ssh_keys_delete`—for a read-only grant, before executing their operations. This authorization boundary is server-side and does not depend on skill instructions. A maintainer must still verify the deployed boundary before submission.
 
 Private local verification passed **89 tests across four suites**, including isolated read-only denial cases and existing consent/scope coverage. The checks used synthetic authentication and mocked resource operations; no production MCP request or resource change was made. The test evidence and maintainer reproduction details are held privately. This public plugin repository does not contain an executable server test harness.
 
@@ -28,9 +32,10 @@ This observation applies to the tested connection. It is not an assurance about 
 
 ## Before submission
 
-- John records agreement or requests a different activation/scope policy; the author does not self-approve his decision.
+- Obtain John's/techadmin's independent PR review after addressing the remaining workflow finding; TJ's acceptance of the activation choice does not substitute for that approval.
 - An authorized maintainer confirms the deployed read-only denial boundary and current write-tool approval settings.
 - With John's account/resource go-ahead and separate user authorization, complete the missing successful instance-detail and four-write tests on approved disposable resources. Current instructions prohibit those changes, so they remain unexecuted and Self-tested remains unchecked.
 - Coordinate reviewer credential rotation through the account owner after applicable active reviews, and update secure portal credentials without recording them in this repository.
+- Until those reviews finish, the account owner must verify the reviewer password is unique and the reviewer account has no card or credit. These account conditions have not been verified by this plugin's author.
 
 Neither a merge nor this document authorizes production operations or directory submission.
