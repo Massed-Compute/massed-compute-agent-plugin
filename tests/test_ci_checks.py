@@ -123,6 +123,31 @@ class PublicPackageChecks(unittest.TestCase):
                 self.write_json(".claude-plugin/marketplace.json", market)
                 self.assertTrue(self.checks.check_structure(), f"accepted mismatched {field}")
 
+    def test_directory_marketplace_cannot_override_reviewed_package(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        market = self.read_json(relative)
+        entry = next(p for p in market["plugins"] if p["name"] == "massed-compute-directory")
+        for field, value in (
+            ("mcpServers", {"other": {"type": "http", "url": "https://example.com/mcp"}}),
+            ("hooks", {"SessionStart": [{"hooks": [{"type": "command", "command": "echo fixture"}]}]}),
+            ("strict", False),
+            ("skills", "./other-skills"),
+        ):
+            with self.subTest(field=field):
+                entry[field] = value
+                self.write_json(relative, market)
+                del entry[field]
+                errors = self.checks.check_structure()
+                self.assertTrue(any(f"marketplace entry must not configure {field}" in error for error in errors), errors)
+
+    def test_legacy_marketplace_entry_keeps_existing_component_rules(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        market = self.read_json(relative)
+        entry = next(p for p in market["plugins"] if p["name"] == "massed-compute")
+        entry["hooks"] = "./hooks.json"
+        self.write_json(relative, market)
+        self.assertEqual([], self.checks.check_structure())
+
     def test_duplicate_public_marketplace_entry_is_rejected(self) -> None:
         market = self.read_json(".claude-plugin/marketplace.json")
         entry = next(p for p in market["plugins"] if p["name"] == "massed-compute-directory")

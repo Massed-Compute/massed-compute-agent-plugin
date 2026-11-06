@@ -27,6 +27,10 @@ DIRECTORY_MANIFEST_KEYS = {
     "name", "version", "description", "author", "homepage", "repository",
     "license", "privacyPolicyUrl", "icon", "keywords", "defaultEnabled",
 }
+# Keep marketplace installation tied to the reviewed source and its manifest.
+DIRECTORY_MARKETPLACE_KEYS = {
+    "name", "description", "version", "source", "category", "keywords",
+}
 DIRECTORY_FILES = {
     ".claude-plugin/plugin.json", ".mcp.json", "README.md", "LICENSE",
     "assets/icon.png", "skills/mc-existing-vms/SKILL.md",
@@ -314,6 +318,8 @@ def check_structure() -> list[str]:
         errors.append("marketplace must contain exactly one massed-compute-directory entry")
     else:
         entry = directory_entries[0]
+        for key in sorted(set(entry) - DIRECTORY_MARKETPLACE_KEYS):
+            errors.append(f"directory marketplace entry must not configure {key}; only reviewed fields are allowed")
         if entry.get("name") != directory_plugin.get("name") or entry.get("version") != directory_plugin.get("version"):
             errors.append("directory marketplace name/version must match the plugin manifest")
         expected_source = "./" + DIRECTORY.relative_to(ROOT).as_posix()
