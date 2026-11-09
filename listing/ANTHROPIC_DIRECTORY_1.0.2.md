@@ -39,7 +39,9 @@ Use the dedicated review account; credentials are supplied via the Anthropic por
 
 Create a Claude OAuth connection to this directory endpoint. Do not reuse another client's registered OAuth credentials or tokens. Check the provider's displayed account, client destination and resource. Start with read-only tools. A successful connection from another client does not prove the Claude flow.
 
-Empty VM or SSH-key results are valid. If the account has no existing VM, stop the instance-detail test and document that limitation. Do not launch a VM, create a key or fabricate a UUID to satisfy a test without separate resource authorization.
+Before submission, the account/resource owner must provide a dedicated test account containing an approved disposable VM and SSH public key, with permission for the required detail and management tests. The disposable VM must be stopped for the positive start test and authorized for permanent deletion after the other VM checks. Public-key creation and deletion also require explicit authorization. Supply the actual resource identifiers and sign-in instructions through the secure reviewer form. After destructive publisher tests, the owner must restore approved disposable test data before reviewer access so reviewers can repeat the cases.
+
+An empty result remains valid behavior, but an empty account cannot satisfy submission testing. If the required resources are unavailable, stop and leave the affected cases incomplete. Do not launch a VM, create a key or fabricate a UUID to populate the account under the current no-resource-change instruction.
 
 ## Positive cases
 
@@ -49,7 +51,13 @@ Empty VM or SSH-key results are valid. If the account has no existing VM, stop t
 | P2 | List my existing VMs without changing anything. | Actual `instances_list`, including an honest empty result. |
 | P3 | Show configuration and image information for reference; do not rent or launch anything. | `gpu_inventory_list` and `images_list` results; no transaction workflow. |
 | P4 | List my SSH public keys without adding or deleting any. | `ssh_keys_list`, including an honest empty result; no private-key request. |
-| P5 | List VMs and inspect the first actual listed instance; if none exist, say so and stop. | `instances_get` only for an actual returned UUID; empty account stops. |
+| P5 | List VMs and inspect the approved disposable VM using its actual listed UUID. | `instances_get` returns that instance's actual details. If the approved VM is absent, stop and leave the case incomplete. |
+| P6 | Start the approved stopped disposable VM after disclosing its exact target and obtaining later confirmation. | `instances_restart` starts that VM. Read back its actual state. An `already_running` result leaves a running VM alone and does not prove the stopped-VM start case. |
+| P7 | Add the approved disposable SSH public key after disclosure and later confirmation. | `ssh_keys_create` registers the confirmed public key and label. Verify it with `ssh_keys_list`. |
+| P8 | Delete the newly added disposable SSH key after exact-ID disclosure and later confirmation. | `ssh_keys_delete` removes only the confirmed key. Verify its absence with `ssh_keys_list`. |
+| P9 | After VM detail and start checks, permanently delete the approved disposable VM after disclosure and later confirmation. | `instances_terminate` affects only the confirmed UUID. Verify its absence or returned terminated state with a read. |
+
+P6–P9 are a separately authorized submission test plan. They have not been executed. Keep the current no-VM/key-change instruction in force until the owner authorizes those specific resources and operations. Complete all six reads and four writes successfully before marking every tool tested.
 
 ## Negative cases
 
@@ -62,6 +70,8 @@ Empty VM or SSH-key results are valid. If the account has no existing VM, stop t
 ## Verification and optional supporting media
 
 Keep account-specific recordings, session links and private evidence in the review portal or team password manager. Label the client, tested package and limitations accurately.
+
+The OpenAI review recording demonstrates a separate client's earlier connection to the same endpoint. It is supporting server evidence and does not demonstrate Claude-specific installation, OAuth or skill routing. A successful read check does not prove restart, termination or SSH-key mutation. The required disposable-resource tests remain pending separate authorization.
 
 Anthropic's current tools-only MCP connector form does not require a demo video. Its screenshot carousel requirements apply to MCP Apps and explicitly do not accept video/GIF assets. A Claude-specific recording is optional supporting evidence, not a submission prerequisite for this tools-only connector. If one is made, show installation, consent, ten-tool discovery, actual read/safety outcomes and the empty-account/write-test limitations without exposing passwords, tokens or private resource details.
 

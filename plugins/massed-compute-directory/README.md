@@ -35,6 +35,8 @@ Read tools: `account_token_validation`, `instances_list`, `instances_get`, `gpu_
 
 Change tools: `instances_restart`, `instances_terminate`, `ssh_keys_create`, `ssh_keys_delete`. For every one of these operations, Claude must disclose the exact operation, target and consequences, then obtain explicit confirmation in a later user message before calling the tool. This includes adding a public key. Authentication permissions and per-tool approvals also apply. Select read-only access when only inspection is intended.
 
+The restart operation starts a stopped instance. A running instance returns `already_running` and continues running without a reboot. Termination permanently deletes the selected instance and its data.
+
 If a requested VM name matches multiple instances, Claude must ask which UUID is intended and stop. Before restarting or terminating multiple VMs, Claude must enumerate each exact UUID, name and SKU and the total count. The later confirmation must name the operation and either that exact count or every disclosed UUID; a bare "yes", "proceed" or "all" does not authorize the writes. A changed target set requires fresh disclosure and confirmation.
 
 If a requested SSH-key label is ambiguous, Claude must ask which exact key ID is intended and stop. Before deleting multiple SSH keys, Claude must enumerate every exact key ID and label and the total count. The later confirmation must name the delete operation and either that exact count or every disclosed key ID; a bare "yes", "proceed" or "all" is insufficient. A changed key set requires fresh disclosure and confirmation.
@@ -53,9 +55,3 @@ Do not supply private SSH keys. The package contains no credentials and has no i
 - [Terms](https://massedcompute.com/legal/terms-conditions/)
 - [Support](https://massedcompute.com/contact/)
 - [MCP documentation](https://vm-docs.massedcompute.com/docs/mcp/overview)
-
-## Review testing limits
-
-Use a dedicated sample account. Start with read-only checks. If it has no VM, instance-detail inspection cannot be demonstrated; do not invent a UUID or launch one. A successful read check does not prove restart, termination or SSH-key mutation. Those operations need separately approved disposable resources and confirmation.
-
-The OpenAI review recording demonstrates a separate client's earlier connection to the same endpoint. It is supporting server evidence and does not demonstrate Claude-specific installation, OAuth or skill routing.

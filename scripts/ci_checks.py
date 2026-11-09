@@ -320,6 +320,13 @@ def check_structure() -> list[str]:
         entry = directory_entries[0]
         for key in sorted(set(entry) - DIRECTORY_MARKETPLACE_KEYS):
             errors.append(f"directory marketplace entry must not configure {key}; only reviewed fields are allowed")
+        for key in sorted((DIRECTORY_MARKETPLACE_KEYS - {"keywords"}) & set(entry)):
+            if not isinstance(entry[key], str):
+                errors.append(f"directory marketplace {key} must be a string")
+        if "keywords" in entry:
+            keywords = entry["keywords"]
+            if not isinstance(keywords, list) or any(not isinstance(keyword, str) for keyword in keywords):
+                errors.append("directory marketplace keywords must be a list of strings")
         if entry.get("name") != directory_plugin.get("name") or entry.get("version") != directory_plugin.get("version"):
             errors.append("directory marketplace name/version must match the plugin manifest")
         expected_source = "./" + DIRECTORY.relative_to(ROOT).as_posix()
@@ -327,10 +334,12 @@ def check_structure() -> list[str]:
             errors.append(f"directory marketplace source must be {expected_source}")
     for entry in plugins:
         source = entry.get("source")
-        if not source:
-            errors.append(".claude-plugin marketplace plugin missing source")
+        if not isinstance(source, str) or not source:
+            errors.append(".claude-plugin marketplace source must be a nonempty local path string")
             continue
         src_path = (ROOT / source).resolve()
+        if src_path == DIRECTORY.resolve() and entry.get("name") != "massed-compute-directory":
+            errors.append("marketplace entries must not alias the public directory package under another name")
         if not src_path.is_dir():
             errors.append(f".claude-plugin marketplace source missing: {source}")
 

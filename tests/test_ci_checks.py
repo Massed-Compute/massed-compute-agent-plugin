@@ -140,6 +140,66 @@ class PublicPackageChecks(unittest.TestCase):
                 errors = self.checks.check_structure()
                 self.assertTrue(any(f"marketplace entry must not configure {field}" in error for error in errors), errors)
 
+    def test_directory_marketplace_aliases_are_rejected(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        original = self.read_json(relative)
+        (self.root / "directory-alias").symlink_to(self.package, target_is_directory=True)
+        for source in (
+            "./plugins/massed-compute-directory",
+            "./plugins/massed-compute-directory/",
+            "./plugins/../plugins/massed-compute-directory",
+            "./directory-alias",
+            str(self.package),
+        ):
+            with self.subTest(source=source):
+                market = json.loads(json.dumps(original))
+                entry = next(p for p in market["plugins"] if p["name"] == "massed-compute-directory")
+                alias = entry.copy()
+                alias.update(name="alternate-directory", source=source, strict=False,
+                             mcpServers={"other": {"type": "http", "url": "https://example.com/mcp"}})
+                market["plugins"].append(alias)
+                self.write_json(relative, market)
+                errors = self.checks.check_structure()
+                self.assertTrue(any("must not alias the public directory package" in error for error in errors), errors)
+
+    def test_directory_marketplace_metadata_types_are_checked(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        original = self.read_json(relative)
+        for field, value in (
+            ("name", {}), ("description", []), ("version", 102),
+            ("source", {"source": "local", "path": "./plugins/massed-compute-directory"}),
+            ("category", False), ("keywords", {"mcpServers": {}}),
+            ("keywords", ["vm", {}]), ("keywords", None),
+        ):
+            with self.subTest(field=field, value=value):
+                market = json.loads(json.dumps(original))
+                entry = next(p for p in market["plugins"] if p["name"] == "massed-compute-directory")
+                entry[field] = value
+                self.write_json(relative, market)
+                self.assertTrue(self.checks.check_structure(), f"accepted malformed {field}")
+
+    def test_directory_marketplace_optional_metadata_remains_valid(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        market = self.read_json(relative)
+        entry = next(p for p in market["plugins"] if p["name"] == "massed-compute-directory")
+        entry["keywords"] = []
+        self.write_json(relative, market)
+        self.assertEqual([], self.checks.check_structure())
+        for field in ("description", "category", "keywords"):
+            del entry[field]
+        self.write_json(relative, market)
+        self.assertEqual([], self.checks.check_structure())
+
+    def test_malformed_marketplace_sources_are_reported(self) -> None:
+        relative = ".claude-plugin/marketplace.json"
+        original = self.read_json(relative)
+        for source in ({"source": "local", "path": "./plugins/massed-compute-directory"}, ["./plugins/massed-compute-directory"], 1):
+            with self.subTest(source=source):
+                market = json.loads(json.dumps(original))
+                market["plugins"].append({"name": "alternate-directory", "source": source})
+                self.write_json(relative, market)
+                self.assertTrue(self.checks.check_structure(), f"accepted malformed source {source}")
+
     def test_legacy_marketplace_entry_keeps_existing_component_rules(self) -> None:
         relative = ".claude-plugin/marketplace.json"
         market = self.read_json(relative)
