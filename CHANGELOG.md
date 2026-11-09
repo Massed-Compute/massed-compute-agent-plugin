@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.0.2 — public directory draft
+
+- Add a separate Claude public management package at `plugins/massed-compute-directory`, using the audience-restricted directory MCP endpoint.
+- Adapt the existing-VM inspection and confirmed-change skills from the OpenAI public review work.
+- Add explicit privacy metadata, package-local documentation, icon and license.
+- Start the public package enabled after explicit installation; provider OAuth and tool permissions still govern account access. The legacy full connector remains disabled by default.
+- Document the corrected submission path, data-transmission disclosure, dedicated reviewer account, five positive and three negative tests, and Claude-specific verification limits.
+- Preserve the original full connector and Cursor package.
+
 ## Unreleased
 
 - Cursor marketplace manifests alongside the existing Claude plugin manifests.
